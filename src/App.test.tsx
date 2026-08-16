@@ -289,7 +289,7 @@ describe("LocalNote page management", () => {
     expect(within(dialog).getByRole("heading", { name: "Appearance" })).toBeVisible();
     expect(within(dialog).getByRole("heading", { name: "Editor" })).toBeVisible();
     expect(within(dialog).getByRole("heading", { name: "About" })).toBeVisible();
-    expect(within(dialog).getByText("Version 0.1.0")).toBeVisible();
+    expect(within(dialog).getByText("Version 1.0.1")).toBeVisible();
     expect(within(dialog).getByText(/stored only on this device/i)).toBeVisible();
 
     fireEvent.click(within(dialog).getByRole("radio", { name: "Light" }));

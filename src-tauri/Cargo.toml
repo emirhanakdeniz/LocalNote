@@ -1,6 +1,6 @@
 [package]
 name = "localnote"
-version = "0.1.0"
+version = "1.0.1"
 description = "A fast, reliable, local-only desktop notes application"
 authors = ["LocalNote contributors"]
 edition = "2021"
