@@ -108,7 +108,7 @@ LocalNote is engineered with a modern, lightweight native desktop stack:
 ### Pre-built Binaries (Windows)
 
 Download the latest release from the **[Releases](../../releases)** page:
-- **`LocalNote_1.0.0_x64-setup.exe`**: Standard Windows installer (NSIS).
+- **`LocalNote_1.0.2_x64-setup.exe`**: Standard Windows installer (NSIS).
 - **`localnote.exe`**: Portable standalone executable.
 
 ---
@@ -149,7 +149,7 @@ npm run tauri build
 
 The compiled binaries will be output to:
 - Standalone Executable: `src-tauri/target/release/localnote.exe`
-- Installer Bundle: `src-tauri/target/release/bundle/nsis/LocalNote_1.0.0_x64-setup.exe`
+- Installer Bundle: `src-tauri/target/release/bundle/nsis/LocalNote_1.0.2_x64-setup.exe`
 
 ### 5. Running the Test Suite
 
