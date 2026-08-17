@@ -1738,6 +1738,190 @@ button.page-tree__disclosure:hover {
   font-size: 0.72rem;
 }
 
+/* Settings Buttons */
+.settings__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.42rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.76rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+}
+
+.settings__button:active {
+  transform: scale(0.98);
+}
+
+.settings__button--primary {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border: 1px solid transparent;
+}
+
+.settings__button--primary:hover {
+  background: var(--color-accent-hover);
+}
+
+.settings__button--secondary {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.settings__button--secondary:hover {
+  background: var(--color-surface-pressed);
+}
+
+/* Settings Backup */
+.settings__backup-action {
+  margin-top: 0.6rem;
+}
+
+.settings__backup-progress {
+  margin-top: 0.6rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.settings__backup-progress-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.settings__backup-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: settings-spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes settings-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.settings__backup-progress-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.settings__backup-progress-text strong {
+  font-size: 0.76rem;
+  color: var(--color-text);
+}
+
+.settings__backup-note-title {
+  font-size: 0.7rem;
+  color: var(--color-text-subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settings__progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--color-border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.settings__progress-fill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 3px;
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.settings__backup-success {
+  margin-top: 0.6rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.settings__backup-success-header {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+}
+
+.settings__backup-success-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.settings__backup-success-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.settings__backup-success-details strong {
+  font-size: 0.78rem;
+  color: var(--color-text);
+}
+
+.settings__backup-success-details p {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+}
+
+.settings__backup-path {
+  display: inline-block;
+  margin-top: 0.2rem;
+  padding: 0.2rem 0.45rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.68rem;
+  background: var(--color-code-background);
+  border: 1px solid var(--color-code-border);
+  border-radius: var(--radius-xs);
+  color: var(--color-text);
+  word-break: break-all;
+}
+
+.settings__backup-success-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.settings__backup-error {
+  margin-top: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
 .settings__about {
   display: flex;
   flex-direction: column;

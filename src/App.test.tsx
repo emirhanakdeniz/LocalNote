@@ -213,6 +213,17 @@ function mockPageCommands(
       if (command === "export_markdown") {
         return Promise.resolve({ exported: true });
       }
+      if (command === "backup_notes") {
+        const notes = Array.isArray(args.notes) ? args.notes : [];
+        return Promise.resolve({
+          destinationPath: "C:\\Users\\User\\Documents\\LocalNote Notes",
+          exportedCount: notes.length,
+          success: true,
+        });
+      }
+      if (command === "open_backup_folder") {
+        return Promise.resolve();
+      }
       if (command === "get_theme") return Promise.resolve("system");
       if (command === "set_theme") return Promise.resolve(args.preference);
       if (command === "get_accent_color") return Promise.resolve("#4c1d95");
@@ -288,6 +299,7 @@ describe("LocalNote page management", () => {
     expect(within(dialog).getByRole("heading", { name: "Settings" })).toBeVisible();
     expect(within(dialog).getByRole("heading", { name: "Appearance" })).toBeVisible();
     expect(within(dialog).getByRole("heading", { name: "Editor" })).toBeVisible();
+    expect(within(dialog).getByRole("heading", { name: "Backup" })).toBeVisible();
     expect(within(dialog).getByRole("heading", { name: "About" })).toBeVisible();
     expect(within(dialog).getByText("Version 1.0.2")).toBeVisible();
     expect(within(dialog).getByText(/stored only on this device/i)).toBeVisible();
@@ -302,6 +314,33 @@ describe("LocalNote page management", () => {
     fireEvent.keyDown(window, { key: "Escape" });
     expect(screen.queryByRole("dialog", { name: "Settings" })).not.toBeInTheDocument();
     expect(settingsTrigger).toHaveFocus();
+  });
+
+  it("triggers backup from Settings with progress and allows opening the backup folder", async () => {
+    const pageItem = page("page-1", "My Notes");
+    mockPageCommands([pageItem], {
+      "page-1": JSON.stringify([{ type: "paragraph", content: "Hello backup" }]),
+    });
+
+    render(<App />);
+    const settingsTrigger = await screen.findByRole("button", { name: "Open settings" });
+    fireEvent.click(settingsTrigger);
+    const dialog = screen.getByRole("dialog", { name: "Settings" });
+
+    const backupButton = within(dialog).getByRole("button", { name: /Backup all notes/i });
+    expect(backupButton).toBeVisible();
+
+    fireEvent.click(backupButton);
+
+    await waitFor(() => {
+      expect(within(dialog).getByText(/Backup complete!/i)).toBeVisible();
+      expect(within(dialog).getByText(/1 note exported to:/i)).toBeVisible();
+    });
+
+    const openFolderButton = within(dialog).getByRole("button", { name: /Open Folder/i });
+    expect(openFolderButton).toBeVisible();
+    fireEvent.click(openFolderButton);
+    expect(invokeMock).toHaveBeenCalledWith("open_backup_folder");
   });
 
   it("opens Settings and selects accent color presets and custom hex", async () => {

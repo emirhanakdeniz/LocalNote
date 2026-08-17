@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
+import type { BackupProgress, BackupStatus } from "../export/useNotesBackup";
 import { ACCENT_PRESETS, isValidHex, normalizeHex } from "../theme/accent";
 import type { ThemePreference } from "../theme/api";
 import type { SpellcheckPreference } from "./api";
@@ -13,9 +14,17 @@ type SettingsDialogProps = {
   accentColorError: string | null;
   spellcheck: SpellcheckPreference;
   spellcheckError: string | null;
+  backupStatus: BackupStatus;
+  backupProgress: BackupProgress;
+  backupDestination: string | null;
+  backupExportedCount: number;
+  backupError: string | null;
   onThemeChange: (preference: ThemePreference) => void;
   onAccentColorChange: (hex: string) => void;
   onSpellcheckChange: (preference: SpellcheckPreference) => void;
+  onStartBackup: () => void;
+  onOpenBackupFolder: () => void;
+  onResetBackup: () => void;
   onClose: () => void;
 };
 
@@ -39,9 +48,17 @@ export function SettingsDialog({
   accentColorError,
   spellcheck,
   spellcheckError,
+  backupStatus,
+  backupProgress,
+  backupDestination,
+  backupExportedCount,
+  backupError,
   onThemeChange,
   onAccentColorChange,
   onSpellcheckChange,
+  onStartBackup,
+  onOpenBackupFolder,
+  onResetBackup,
   onClose,
 }: SettingsDialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -254,6 +271,115 @@ export function SettingsDialog({
             </div>
           </fieldset>
           {spellcheckError && <p className="settings__error" role="alert">{spellcheckError}</p>}
+        </section>
+
+        <section className="settings__section" aria-labelledby="settings-backup">
+          <h2 id="settings-backup">Backup</h2>
+          <p className="settings__field-description">
+            Export all your notes as Markdown files into the <code>Documents/LocalNote Notes</code> folder.
+          </p>
+
+          {backupStatus === "idle" && (
+            <div className="settings__backup-action">
+              <button
+                type="button"
+                className="settings__button settings__button--primary"
+                onClick={onStartBackup}
+              >
+                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M8 2v8M4.5 7.5L8 11l3.5-3.5M2.5 13.5h11" />
+                </svg>
+                <span>Backup all notes</span>
+              </button>
+            </div>
+          )}
+
+          {backupStatus === "in_progress" && (
+            <div className="settings__backup-progress" role="status" aria-live="polite">
+              <div className="settings__backup-progress-header">
+                <span className="settings__backup-spinner" aria-hidden="true" />
+                <div className="settings__backup-progress-text">
+                  <strong>
+                    {backupProgress.total > 0
+                      ? `Exporting note ${backupProgress.current} of ${backupProgress.total}…`
+                      : "Preparing backup…"}
+                  </strong>
+                  <span className="settings__backup-note-title" title={backupProgress.noteTitle}>
+                    {backupProgress.noteTitle}
+                  </span>
+                </div>
+              </div>
+              <div
+                className="settings__progress-bar"
+                role="progressbar"
+                aria-valuenow={backupProgress.total > 0 ? Math.round((backupProgress.current / backupProgress.total) * 100) : 0}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              >
+                <div
+                  className="settings__progress-fill"
+                  style={{
+                    width: `${backupProgress.total > 0 ? Math.max(5, Math.round((backupProgress.current / backupProgress.total) * 100)) : 10}%`,
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          {backupStatus === "success" && (
+            <div className="settings__backup-success" role="status" aria-live="polite">
+              <div className="settings__backup-success-header">
+                <div className="settings__backup-success-icon" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3.5 8.5L6.5 11.5L12.5 4.5" />
+                  </svg>
+                </div>
+                <div className="settings__backup-success-details">
+                  <strong>Backup complete!</strong>
+                  <p>
+                    {backupExportedCount} {backupExportedCount === 1 ? "note" : "notes"} exported to:
+                  </p>
+                  {backupDestination && (
+                    <code className="settings__backup-path" title={backupDestination}>
+                      {backupDestination}
+                    </code>
+                  )}
+                </div>
+              </div>
+              <div className="settings__backup-success-actions">
+                <button
+                  type="button"
+                  className="settings__button settings__button--primary"
+                  onClick={onOpenBackupFolder}
+                >
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M1.5 3.5h4l1.5 2h7.5v8H1.5z" />
+                  </svg>
+                  <span>Open Folder</span>
+                </button>
+                <button
+                  type="button"
+                  className="settings__button settings__button--secondary"
+                  onClick={onResetBackup}
+                >
+                  Backup Again
+                </button>
+              </div>
+            </div>
+          )}
+
+          {backupStatus === "error" && (
+            <div className="settings__backup-error" role="alert">
+              <p className="settings__error">{backupError}</p>
+              <button
+                type="button"
+                className="settings__button settings__button--primary"
+                onClick={onStartBackup}
+              >
+                Retry Backup
+              </button>
+            </div>
+          )}
         </section>
 
         <section className="settings__section settings__about" aria-labelledby="settings-about">

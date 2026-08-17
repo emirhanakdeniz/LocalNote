@@ -105,6 +105,19 @@ fn export_markdown(
 }
 
 #[tauri::command]
+fn backup_notes(
+    app: tauri::AppHandle,
+    notes: Vec<export::BackupNoteItem>,
+) -> Result<export::BackupResult, String> {
+    export::backup_notes(&app, notes).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+fn open_backup_folder(app: tauri::AppHandle) -> Result<(), String> {
+    export::open_backup_folder(&app).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
 fn get_theme(state: tauri::State<'_, DatabaseState>) -> Result<settings::ThemePreference, String> {
     settings::get_theme(&state).map_err(|error| error.to_string())
 }
@@ -202,6 +215,8 @@ pub fn run() {
             save_document,
             search_pages,
             export_markdown,
+            backup_notes,
+            open_backup_folder,
             get_theme,
             set_theme,
             get_spellcheck,

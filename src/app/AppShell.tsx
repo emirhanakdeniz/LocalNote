@@ -3,6 +3,7 @@ import { EditorErrorBoundary } from "../features/editor/EditorErrorBoundary";
 import { LocalNoteEditor } from "../features/editor/LocalNoteEditor";
 import { useDocumentPersistence } from "../features/editor/useDocumentPersistence";
 import { useMarkdownExport } from "../features/export/useMarkdownExport";
+import { useNotesBackup } from "../features/export/useNotesBackup";
 import { usePageManagement } from "../features/pages/usePageManagement";
 import { QuickSearch } from "../features/search/QuickSearch";
 import { SettingsDialog } from "../features/settings/SettingsDialog";
@@ -32,6 +33,7 @@ export function AppShell() {
   const [trashOpen, setTrashOpen] = useState(false);
   const settingsTriggerRef = useRef<HTMLButtonElement>(null);
   const documents = useDocumentPersistence();
+  const backup = useNotesBackup(documents.flush);
   const markdownExport = useMarkdownExport(
     pageManagement.activePageId,
     documents.flush,
@@ -237,9 +239,17 @@ export function AppShell() {
         accentColorError={accent.error}
         spellcheck={spellcheck.preference}
         spellcheckError={spellcheck.error}
+        backupStatus={backup.status}
+        backupProgress={backup.progress}
+        backupDestination={backup.destinationPath}
+        backupExportedCount={backup.exportedCount}
+        backupError={backup.error}
         onThemeChange={(preference) => void theme.setTheme(preference)}
         onAccentColorChange={(hex) => void accent.setAccentColor(hex)}
         onSpellcheckChange={(preference) => void spellcheck.setSpellcheck(preference)}
+        onStartBackup={() => void backup.startBackup()}
+        onOpenBackupFolder={() => void backup.openFolder()}
+        onResetBackup={backup.reset}
         onClose={closeSettings}
       />
       <TrashDialog
