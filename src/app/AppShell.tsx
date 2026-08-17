@@ -184,6 +184,7 @@ export function AppShell() {
           <LocalNoteEditor
             pageId={loadedDocument.pageId}
             title={pageManagement.activePage!.title}
+            onRename={(title) => pageManagement.renamePage(pageManagement.activePage!.id, title)}
             initialBlocks={loadedDocument.blocks}
             saveStatus={documents.status}
             saveError={documents.error}

@@ -634,6 +634,80 @@ describe("LocalNote page management", () => {
     expect(invokeMock).toHaveBeenCalledWith("create_page", { parentId: null });
   });
 
+  it("renames the active note by clicking the title in the editor header", async () => {
+    mockPageCommands([page("alpha", "Alpha")]);
+    render(<App />);
+    const heading = await screen.findByRole("heading", { name: "Alpha" });
+    expect(heading).toHaveClass("editor-title--clickable");
+
+    fireEvent.click(heading);
+    const input = screen.getByRole("textbox", { name: "Edit note title" });
+    expect(input).toHaveValue("Alpha");
+
+    fireEvent.change(input, { target: { value: "New Alpha Title" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    expect(await screen.findByRole("heading", { name: "New Alpha Title" })).toBeVisible();
+    expect(invokeMock).toHaveBeenCalledWith("rename_page", {
+      id: "alpha",
+      title: "New Alpha Title",
+    });
+  });
+
+  it("renames the active note using the F2 shortcut in the editor", async () => {
+    mockPageCommands([page("alpha", "Alpha")]);
+    render(<App />);
+    await screen.findByRole("heading", { name: "Alpha" });
+
+    fireEvent.keyDown(window, { key: "F2" });
+    const input = await screen.findByRole("textbox", { name: "Edit note title" });
+    expect(input).toHaveValue("Alpha");
+
+    fireEvent.change(input, { target: { value: "Renamed via F2" } });
+    fireEvent.blur(input);
+
+    expect(await screen.findByRole("heading", { name: "Renamed via F2" })).toBeVisible();
+    expect(invokeMock).toHaveBeenCalledWith("rename_page", {
+      id: "alpha",
+      title: "Renamed via F2",
+    });
+  });
+
+  it("renames a sidebar page item directly by pressing F2", async () => {
+    mockPageCommands([page("alpha", "Alpha")]);
+    render(<App />);
+    await screen.findByRole("heading", { name: "Alpha" });
+
+    const pageButton = screen.getByRole("button", { name: "Alpha" });
+    fireEvent.keyDown(pageButton, { key: "F2" });
+
+    const sidebarInput = screen.getByRole("textbox", { name: "Rename Alpha" });
+    expect(sidebarInput).toHaveValue("Alpha");
+
+    fireEvent.change(sidebarInput, { target: { value: "Sidebar F2 Renamed" } });
+    fireEvent.keyDown(sidebarInput, { key: "Enter" });
+
+    expect(await screen.findByRole("heading", { name: "Sidebar F2 Renamed" })).toBeVisible();
+    expect(invokeMock).toHaveBeenCalledWith("rename_page", {
+      id: "alpha",
+      title: "Sidebar F2 Renamed",
+    });
+  });
+
+  it("cancels editor header title rename on Escape without saving", async () => {
+    mockPageCommands([page("alpha", "Alpha")]);
+    render(<App />);
+    const heading = await screen.findByRole("heading", { name: "Alpha" });
+
+    fireEvent.click(heading);
+    const input = screen.getByRole("textbox", { name: "Edit note title" });
+    fireEvent.change(input, { target: { value: "Unsaved Title" } });
+    fireEvent.keyDown(input, { key: "Escape" });
+
+    expect(await screen.findByRole("heading", { name: "Alpha" })).toBeVisible();
+    expect(invokeMock).not.toHaveBeenCalledWith("rename_page", expect.anything());
+  });
+
   it("renames the active page with the keyboard", async () => {
     mockPageCommands([page("alpha", "Alpha")]);
     render(<App />);

@@ -8,6 +8,7 @@ import type { ExportStatus, MarkdownSerializer } from "../export/useMarkdownExpo
 
 type EditorHeaderProps = {
   title: string;
+  onRename?: (title: string) => Promise<boolean>;
   saveStatus: SaveStatus;
   saveError: string | null;
   onRetrySave: () => void;
@@ -37,6 +38,7 @@ const statusConfig: Record<
 
 export function EditorHeader({
   title,
+  onRename,
   saveStatus,
   saveError,
   onRetrySave,
@@ -53,9 +55,65 @@ export function EditorHeader({
   isTocVisible = true,
   onToggleToc,
 }: EditorHeaderProps) {
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [titleInput, setTitleInput] = useState(title);
+  const titleInputRef = useRef<HTMLInputElement>(null);
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const moreTriggerRef = useRef<HTMLButtonElement>(null);
   const moreMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setTitleInput(title);
+  }, [title]);
+
+  useEffect(() => {
+    if (isEditingTitle) {
+      titleInputRef.current?.focus();
+      titleInputRef.current?.select();
+    }
+  }, [isEditingTitle]);
+
+  useEffect(() => {
+    const handleGlobalF2 = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "F2") {
+        const target = event.target instanceof Element ? event.target : null;
+        const isInSidebarTree = Boolean(target?.closest(".page-tree"));
+        const isInModal = Boolean(
+          target?.closest(".settings, .trash-dialog, .dialog-backdrop, [role='dialog']"),
+        );
+        if (!isInSidebarTree && !isInModal) {
+          event.preventDefault();
+          setIsEditingTitle(true);
+        }
+      }
+    };
+    window.addEventListener("keydown", handleGlobalF2);
+    return () => window.removeEventListener("keydown", handleGlobalF2);
+  }, []);
+
+  const commitTitleRename = async () => {
+    const trimmed = titleInput.trim();
+    if (!trimmed) {
+      setTitleInput(title);
+      setIsEditingTitle(false);
+      return;
+    }
+    if (trimmed !== title && onRename) {
+      await onRename(trimmed);
+    }
+    setIsEditingTitle(false);
+  };
+
+  const handleTitleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      void commitTitleRename();
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      setTitleInput(title);
+      setIsEditingTitle(false);
+    }
+  };
 
   useEffect(() => {
     if (!moreMenuOpen) return;
@@ -105,7 +163,35 @@ export function EditorHeader({
 
       {/* Title & Actions Row */}
       <div className="editor-title-row">
-        <h1 className="editor-title">{title}</h1>
+        {isEditingTitle ? (
+          <input
+            ref={titleInputRef}
+            type="text"
+            className="editor-title-input"
+            value={titleInput}
+            maxLength={200}
+            aria-label="Edit note title"
+            placeholder="Untitled"
+            onChange={(event) => setTitleInput(event.target.value)}
+            onKeyDown={handleTitleKeyDown}
+            onBlur={() => void commitTitleRename()}
+          />
+        ) : (
+          <h1
+            className="editor-title editor-title--clickable"
+            onClick={() => setIsEditingTitle(true)}
+            title="Click or press F2 to rename"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " " || event.key === "F2") {
+                event.preventDefault();
+                setIsEditingTitle(true);
+              }
+            }}
+          >
+            {title || "Untitled"}
+          </h1>
+        )}
 
         <div className="editor-actions">
           {/* Quick Action: Favorite */}
@@ -182,6 +268,17 @@ export function EditorHeader({
                 >
                   <Icon name="star" />
                   <span>{isFavorite ? "Remove from favorites" : "Add to favorites"}</span>
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setMoreMenuOpen(false);
+                    setIsEditingTitle(true);
+                  }}
+                >
+                  <Icon name="pencil" />
+                  <span>Rename</span>
                 </button>
                 <button
                   type="button"

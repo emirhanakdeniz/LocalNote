@@ -167,6 +167,9 @@ function PageTreeItem({
               if (event.key === "Delete") {
                 event.preventDefault();
                 onRequestDelete(page);
+              } else if (event.key === "F2") {
+                event.preventDefault();
+                setRenaming(true);
               }
             }}
           >

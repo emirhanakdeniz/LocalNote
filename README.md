@@ -74,6 +74,7 @@ Your thoughts, code snippets, and project plans belong to you. LocalNote stores 
 | :--- | :--- |
 | `Ctrl + P` | Open Quick Search (FTS5 search across all notes) |
 | `Ctrl + N` | Create a new page at the root level |
+| `F2` | Rename active note or focused sidebar item |
 | `Ctrl + \` | Collapse / Expand sidebar |
 | `Ctrl + D` | Duplicate the active editor block |
 | `Ctrl + B` | Toggle **bold** formatting |

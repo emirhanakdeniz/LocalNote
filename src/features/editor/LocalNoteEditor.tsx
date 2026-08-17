@@ -61,6 +61,7 @@ function useResolvedTheme(): ResolvedTheme {
 type LocalNoteEditorProps = {
   pageId: string;
   title: string;
+  onRename?: (title: string) => Promise<boolean>;
   initialBlocks: PartialBlock[];
   saveStatus: SaveStatus;
   saveError: string | null;
@@ -80,6 +81,7 @@ type LocalNoteEditorProps = {
 export function LocalNoteEditor({
   pageId,
   title,
+  onRename,
   initialBlocks,
   saveStatus,
   saveError,
@@ -235,6 +237,7 @@ export function LocalNoteEditor({
         <article className="document" onClick={handleContainerClick}>
           <EditorHeader
             title={title}
+            onRename={onRename}
             saveStatus={saveStatus}
             saveError={saveError}
             onRetrySave={onRetrySave}
