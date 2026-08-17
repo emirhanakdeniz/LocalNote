@@ -42,15 +42,14 @@ export function isInsideCodeBlock(target: EventTarget | null, editor?: BlockNote
   return false;
 }
 
-export async function handleEditorPaste(
+export function handleEditorPaste(
   event: ClipboardEvent,
   editor: BlockNoteEditor,
-): Promise<boolean> {
+): boolean {
   const clipboardData = event.clipboardData;
   if (!clipboardData) return false;
 
   const plainText = clipboardData.getData("text/plain") ?? "";
-  const rawHtml = clipboardData.getData("text/html") ?? "";
 
   // 1. Inside a Code Block: Always paste raw text preserving newlines & indentation
   if (isInsideCodeBlock(event.target, editor)) {
@@ -66,75 +65,7 @@ export async function handleEditorPaste(
     return false;
   }
 
-  // 2. If no content at all, allow default
-  if (!plainText && !rawHtml) {
-    return false;
-  }
-
-  // 3. Try parsing rich HTML safely if available and not overly large
-  if (rawHtml) {
-    const sanitizedHtml = sanitizeHtmlForPaste(rawHtml);
-    if (sanitizedHtml && typeof editor.tryParseHTMLToBlocks === "function") {
-      try {
-        const blocks = await editor.tryParseHTMLToBlocks(sanitizedHtml);
-        if (blocks && Array.isArray(blocks) && blocks.length > 0) {
-          event.preventDefault();
-          const currentPosition = editor.getTextCursorPosition?.();
-          if (currentPosition?.block) {
-            editor.insertBlocks(blocks as PartialBlock[], currentPosition.block, "after");
-          } else {
-            editor.insertBlocks(blocks as PartialBlock[], editor.document[editor.document.length - 1], "after");
-          }
-          return true;
-        }
-      } catch {
-        // Fallback to plain text on any HTML parsing error
-      }
-    }
-  }
-
-  // 4. Multi-line plain text handling
-  if (plainText && plainText.includes("\n")) {
-    event.preventDefault();
-    try {
-      if (typeof editor.tryParseMarkdownToBlocks === "function") {
-        const blocks = await editor.tryParseMarkdownToBlocks(plainText);
-        if (blocks && Array.isArray(blocks) && blocks.length > 0) {
-          const currentPosition = editor.getTextCursorPosition?.();
-          if (currentPosition?.block) {
-            editor.insertBlocks(blocks as PartialBlock[], currentPosition.block, "after");
-          } else {
-            editor.insertBlocks(blocks as PartialBlock[], editor.document[editor.document.length - 1], "after");
-          }
-          return true;
-        }
-      }
-    } catch {
-      // Fallback
-    }
-
-    // Fallback: split by line into simple paragraph blocks
-    try {
-      const lines = plainText.split(/\r?\n/).filter((line) => line.length > 0);
-      if (lines.length > 0) {
-        const paragraphBlocks: PartialBlock[] = lines.map((line) => ({
-          type: "paragraph",
-          content: line,
-        }));
-        const currentPosition = editor.getTextCursorPosition?.();
-        if (currentPosition?.block) {
-          editor.insertBlocks(paragraphBlocks, currentPosition.block, "after");
-        } else {
-          editor.insertBlocks(paragraphBlocks, editor.document[editor.document.length - 1], "after");
-        }
-        return true;
-      }
-    } catch {
-      // Fallback to execCommand
-    }
-  }
-
-  // 5. Single-line plain text: let default or execCommand handle
+  // 2. Outside code blocks: Let ProseMirror / BlockNote handle pasting directly at cursor position
   return false;
 }
 

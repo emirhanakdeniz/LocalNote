@@ -80,42 +80,37 @@ describe("editor clipboard safety", () => {
     document.body.removeChild(codeEl);
   });
 
-  it("gracefully falls back when HTML parsing throws", async () => {
+  it("allows default editor paste at cursor when outside code blocks", () => {
+    const normalP = document.createElement("p");
+    document.body.appendChild(normalP);
+
     const mockEditor = {
       getTextCursorPosition: () => ({
         block: { id: "b1", type: "paragraph", content: [] },
       }),
-      tryParseHTMLToBlocks: vi.fn().mockRejectedValue(new Error("Parser crashed")),
-      tryParseMarkdownToBlocks: vi.fn().mockResolvedValue([
-        { type: "paragraph", content: "Fallback Line 1" },
-        { type: "paragraph", content: "Fallback Line 2" },
-      ]),
       insertBlocks: vi.fn(),
       document: [{ id: "b1" }],
     } as unknown as BlockNoteEditor;
 
     const preventDefault = vi.fn();
     const event = {
-      target: document.body,
+      target: normalP,
       preventDefault,
       clipboardData: {
         getData: (format: string) => {
-          if (format === "text/plain") return "Fallback Line 1\nFallback Line 2";
-          if (format === "text/html") return "<div><bad-html></div>";
+          if (format === "text/plain") return "Hello world at cursor";
+          if (format === "text/html") return "<p><strong>Hello world</strong> at cursor</p>";
           return "";
         },
       },
     } as unknown as ClipboardEvent;
 
-    const handled = await handleEditorPaste(event, mockEditor);
-    expect(handled).toBe(true);
-    expect(mockEditor.insertBlocks).toHaveBeenCalledWith(
-      expect.arrayContaining([
-        expect.objectContaining({ type: "paragraph" }),
-      ]),
-      expect.anything(),
-      "after",
-    );
+    const handled = handleEditorPaste(event, mockEditor);
+    expect(handled).toBe(false);
+    expect(preventDefault).not.toHaveBeenCalled();
+    expect(mockEditor.insertBlocks).not.toHaveBeenCalled();
+
+    document.body.removeChild(normalP);
   });
 
   it("duplicates the active block with duplicateActiveBlock", () => {
