@@ -201,4 +201,6 @@ cargo test --manifest-path src-tauri/Cargo.toml
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+This project is licensed under the [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0). See [LICENSE](LICENSE) for details.
+
+You may use, modify, and distribute LocalNote for any **noncommercial** purpose. Commercial use requires a separate license from the author.
