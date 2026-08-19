@@ -17,6 +17,10 @@
   <img src="https://img.shields.io/badge/License-PolyForm--Noncommercial--1.0.0-orange.svg" alt="License: PolyForm Noncommercial 1.0.0" />
 </p>
 
+<p align="center">
+  <img src="docs/screenshots/localnote-dark.png" alt="LocalNote Dark Theme Preview" width="780" />
+</p>
+
 ---
 
 ## Overview
@@ -38,6 +42,35 @@ It brings the familiar, flexible block-based editing experience of modern produc
 - 🛡️ **Ironclad Data Safety**: Debounced autosave with a serialized write queue, flush-before-load page switching, window close protection, and non-destructive recovery that never silently wipes malformed documents.
 - 📤 **Markdown Export**: Export any note to standard `.md` format with sanitized, OS-safe file naming.
 - 🔒 **Private by Design**: Zero telemetry, analytics, authentication, or network APIs — fully functional offline, guarded by a strict CSP (`default-src 'self'`).
+
+---
+
+## Screenshots
+
+<table align="center">
+  <tr>
+    <td align="center" width="50%">
+      <strong>🌙 Dark Theme (Default)</strong><br />
+      <img src="docs/screenshots/localnote-dark.png" alt="LocalNote Dark Theme" />
+    </td>
+    <td align="center" width="50%">
+      <strong>☀️ Light Theme</strong><br />
+      <img src="docs/screenshots/localnote-light.png" alt="LocalNote Light Theme" />
+    </td>
+  </tr>
+</table>
+
+<p align="center">
+  <em>Distraction-free block editor, dynamic table of contents, breadcrumb trail, and live word/character counters.</em>
+</p>
+
+<br />
+
+<p align="center">
+  <strong>⚙️ Appearance & Settings</strong><br />
+  <img src="docs/screenshots/localnote-settings.png" alt="LocalNote Settings & Preferences" width="520" /><br />
+  <em>Theme toggle, 6 curated accent color presets or custom HEX values, spellcheck setting, and 1-click Markdown backup.</em>
+</p>
 
 ---
 
@@ -105,6 +138,8 @@ flowchart TD
 
 ```text
 LocalNote/
+├── docs/                       # Documentation & media assets
+│   └── screenshots/            # In-app application screenshots
 ├── public/                     # Static assets (App icon)
 ├── src/                        # Frontend React application
 │   ├── app/
