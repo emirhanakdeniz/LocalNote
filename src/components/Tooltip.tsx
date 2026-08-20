@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type ReactNode } from "react";
+import { useState, useRef, useEffect, useId, cloneElement, isValidElement, type ReactNode } from "react";
 
 type TooltipPosition = "top" | "bottom" | "left" | "right";
 
@@ -20,6 +20,7 @@ export function Tooltip({
   disabled = false,
 }: TooltipProps) {
   const [visible, setVisible] = useState(false);
+  const tooltipId = useId();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const show = () => {
@@ -51,12 +52,16 @@ export function Tooltip({
       onFocus={show}
       onBlur={hide}
     >
-      {children}
+      {isValidElement<{ "aria-describedby"?: string }>(children)
+        ? cloneElement(children, {
+            "aria-describedby": visible ? tooltipId : children.props["aria-describedby"],
+          })
+        : children}
       {visible && (
         <div
           role="tooltip"
+          id={tooltipId}
           className={`tooltip tooltip--${position}`}
-          aria-hidden="true"
         >
           {content}
         </div>

@@ -36,6 +36,13 @@
   padding-inline: 0;
 }
 
+/* The editor root is focusable for text entry, but it is not a single control.
+   Avoid inheriting the global tabindex focus ring around the whole document. */
+.localnote-editor .bn-editor:focus-visible,
+.localnote-editor [contenteditable="true"]:focus-visible {
+  outline: none;
+}
+
 .localnote-editor .bn-block-group,
 .localnote-editor .bn-block-outer,
 .localnote-editor .bn-block {
@@ -456,6 +463,16 @@
 .bn-mantine .bn-side-menu:hover,
 .bn-mantine .bn-side-menu:focus-within {
   opacity: 1;
+}
+
+/* BlockNote tracks pointer movement globally. Keep document controls inside the
+   document context when either navigation rail owns the pointer or focus. */
+.app-shell:has(.sidebar:hover) .bn-side-menu,
+.app-shell:has(.sidebar:focus-within) .bn-side-menu,
+.editor-view-container:has(.table-of-contents:hover) .bn-side-menu,
+.editor-view-container:has(.table-of-contents:focus-within) .bn-side-menu {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .bn-mantine .bn-side-menu .mantine-UnstyledButton-root {

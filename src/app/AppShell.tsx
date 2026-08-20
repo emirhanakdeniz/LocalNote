@@ -46,11 +46,33 @@ export function AppShell() {
     pageId: documentPageId,
   } = documents;
   const sidebarState = useSidebarState();
+  const { setCollapsed: setSidebarCollapsed } = sidebarState;
   const transitionRef = useRef(Promise.resolve());
   const closeSettings = useCallback(() => setSettingsOpen(false), []);
   const openSettings = useCallback(() => setSettingsOpen(true), []);
   const closeTrash = useCallback(() => setTrashOpen(false), []);
   const openTrash = useCallback(() => setTrashOpen(true), []);
+
+  useEffect(() => {
+    if (window.matchMedia?.("(max-width: 759px)").matches) {
+      setSidebarCollapsed(true);
+    }
+  // Only apply the mobile default when the shell mounts; the user can then open it.
+  }, [setSidebarCollapsed]);
+
+  useEffect(() => {
+    const closeMobileSidebar = (event: KeyboardEvent) => {
+      if (
+        event.key === "Escape" &&
+        window.matchMedia?.("(max-width: 759px)").matches &&
+        !sidebarState.isCollapsed
+      ) {
+        setSidebarCollapsed(true);
+      }
+    };
+    window.addEventListener("keydown", closeMobileSidebar);
+    return () => window.removeEventListener("keydown", closeMobileSidebar);
+  }, [sidebarState.isCollapsed, setSidebarCollapsed]);
 
   const serializeTransition = useCallback(<T,>(operation: () => Promise<T>) => {
     const result = transitionRef.current.then(operation, operation);
@@ -153,6 +175,7 @@ export function AppShell() {
         style={{ "--sidebar-width": sidebarWidthValue } as React.CSSProperties}
       >
         {!isFocusMode && (
+          <>
           <Sidebar
             {...pageManagement}
             selectPage={selectPage}
@@ -168,6 +191,15 @@ export function AppShell() {
             onResizerPointerDown={sidebarState.handleResizerPointerDown}
             onResizerDoubleClick={sidebarState.handleResizerDoubleClick}
           />
+          {!sidebarState.isCollapsed && (
+            <button
+              type="button"
+              className="sidebar-mobile-backdrop"
+              aria-label="Close navigation"
+              onClick={() => setSidebarCollapsed(true)}
+            />
+          )}
+          </>
         )}
         <QuickSearch
           open={searchOpen}
@@ -186,6 +218,19 @@ export function AppShell() {
           <LocalNoteEditor
             pageId={loadedDocument.pageId}
             title={pageManagement.activePage!.title}
+            breadcrumbs={(() => {
+              const path = [];
+              let current = pageManagement.activePage;
+              const visited = new Set<string>();
+              while (current && !visited.has(current.id)) {
+                visited.add(current.id);
+                path.unshift({ id: current.id, title: current.title });
+                current = current.parentId
+                  ? (pageManagement.pages.find((page) => page.id === current!.parentId) ?? null)
+                  : null;
+              }
+              return path;
+            })()}
             onRename={(title) => pageManagement.renamePage(pageManagement.activePage!.id, title)}
             initialBlocks={loadedDocument.blocks}
             saveStatus={documents.status}

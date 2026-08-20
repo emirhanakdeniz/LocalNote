@@ -4,9 +4,10 @@ export interface AccentPreset {
   hex: string;
 }
 
-export const DEFAULT_ACCENT_COLOR = "#4c1d95";
+export const DEFAULT_ACCENT_COLOR = "#3b6fe5";
 
 export const ACCENT_PRESETS: readonly AccentPreset[] = [
+  { id: "local-blue", name: "Local Blue", hex: "#3b6fe5" },
   { id: "deep-purple", name: "Deep Purple", hex: "#4c1d95" },
   { id: "royal-aubergine", name: "Royal Aubergine", hex: "#3b185f" },
   { id: "emerald-forest", name: "Emerald Forest", hex: "#14532d" },

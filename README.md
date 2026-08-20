@@ -36,9 +36,10 @@ It brings the familiar, flexible block-based editing experience of modern produc
 - ⚡ **Fast & Lightweight**: Powered by **Tauri v2** and **Rust** for minimal resource consumption, with all data stored in an embedded SQLite database running in WAL mode.
 - 📝 **Block-Based Writing**: Rich block types — paragraphs, headings, bullet/numbered lists, checklists, blockquotes, and dividers — with **slash commands** (`/`), markdown shortcuts (`#`, `-`, `1.`, `>`, …), and drag handles for reordering and transformations.
 - 🎨 **Code Syntax Highlighting**: Integrated **Shiki 4.4** engine with meticulously balanced soft-contrast palettes, supporting TypeScript, JavaScript, Python, Rust, HTML, CSS, SQL, Shell, JSON, and more without network calls.
-- 🔍 **Instant Local Search**: **SQLite FTS5** full-text search across page titles and complete note contents with millisecond response times and keyboard-first navigation.
+- 🔍 **Instant Local Search**: **SQLite FTS5** full-text search across page titles and complete note contents with highlighted matches, clear result states, and keyboard-first navigation.
 - 🗂️ **Hierarchy, Organization & Trash**: Deep multi-level nested pages with cycle prevention, favorites, and two-stage delete protection with a dedicated **Trash** surface for restore or permanent purge.
-- 🎨 **Themes & Accent Palettes**: Light, Dark, and System themes, curated accent presets (Deep Purple, Royal Aubergine, Emerald Forest, Deep Teal, Midnight Navy, Slate Blue), and custom HEX color input.
+- 🎨 **Quiet Windows Workbench**: A readable three-pane layout with hierarchy breadcrumbs, a local save-status rail, a focused contents navigator, and a compact navigation overlay at smaller window sizes.
+- 🎨 **Themes & Accent Palettes**: Frost light, Night dark, and System themes, Local Blue as the default for new installations, existing curated accents, and custom HEX color input.
 - 🛡️ **Ironclad Data Safety**: Debounced autosave with a serialized write queue, flush-before-load page switching, window close protection, and non-destructive recovery that never silently wipes malformed documents.
 - 📤 **Markdown Export**: Export any note to standard `.md` format with sanitized, OS-safe file naming.
 - 🔒 **Private by Design**: Zero telemetry, analytics, authentication, or network APIs — fully functional offline, guarded by a strict CSP (`default-src 'self'`).

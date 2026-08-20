@@ -23,6 +23,8 @@ import "./local-note-editor.css";
 
 type ResolvedTheme = "light" | "dark";
 
+export type EditorBreadcrumb = { id: string; title: string };
+
 function resolveTheme(): ResolvedTheme {
   const explicitTheme = document.documentElement.dataset.theme;
 
@@ -61,6 +63,7 @@ function useResolvedTheme(): ResolvedTheme {
 type LocalNoteEditorProps = {
   pageId: string;
   title: string;
+  breadcrumbs: EditorBreadcrumb[];
   onRename?: (title: string) => Promise<boolean>;
   initialBlocks: PartialBlock[];
   saveStatus: SaveStatus;
@@ -81,6 +84,7 @@ type LocalNoteEditorProps = {
 export function LocalNoteEditor({
   pageId,
   title,
+  breadcrumbs,
   onRename,
   initialBlocks,
   saveStatus,
@@ -237,6 +241,7 @@ export function LocalNoteEditor({
         <article className="document" onClick={handleContainerClick}>
           <EditorHeader
             title={title}
+            breadcrumbs={breadcrumbs}
             onRename={onRename}
             saveStatus={saveStatus}
             saveError={saveError}

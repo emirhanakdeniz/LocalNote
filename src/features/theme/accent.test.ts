@@ -10,10 +10,11 @@ import {
 } from "./accent";
 
 describe("accent utilities", () => {
-  it("includes all requested presets with Deep Purple default", () => {
-    expect(DEFAULT_ACCENT_COLOR).toBe("#4c1d95");
-    expect(ACCENT_PRESETS).toHaveLength(6);
+  it("includes all requested presets with Local Blue default", () => {
+    expect(DEFAULT_ACCENT_COLOR).toBe("#3b6fe5");
+    expect(ACCENT_PRESETS).toHaveLength(7);
     expect(ACCENT_PRESETS.map((p) => p.hex)).toEqual([
+      "#3b6fe5",
       "#4c1d95",
       "#3b185f",
       "#14532d",

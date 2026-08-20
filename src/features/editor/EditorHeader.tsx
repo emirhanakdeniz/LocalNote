@@ -5,9 +5,11 @@ import { Tooltip } from "../../components/Tooltip";
 import { DocumentStats } from "./DocumentStats";
 import type { SaveStatus } from "./types";
 import type { ExportStatus, MarkdownSerializer } from "../export/useMarkdownExport";
+import type { EditorBreadcrumb } from "./LocalNoteEditor";
 
 type EditorHeaderProps = {
   title: string;
+  breadcrumbs: EditorBreadcrumb[];
   onRename?: (title: string) => Promise<boolean>;
   saveStatus: SaveStatus;
   saveError: string | null;
@@ -30,14 +32,15 @@ const statusConfig: Record<
   SaveStatus,
   { label: string; dotClass: string }
 > = {
-  saved: { label: "Saved", dotClass: "status-dot--saved" },
-  saving: { label: "Saving…", dotClass: "status-dot--saving" },
+  saved: { label: "Saved on this device", dotClass: "status-dot--saved" },
+  saving: { label: "Saving locally…", dotClass: "status-dot--saving" },
   unsaved: { label: "Unsaved changes", dotClass: "status-dot--unsaved" },
   error: { label: "Save failed", dotClass: "status-dot--error" },
 };
 
 export function EditorHeader({
   title,
+  breadcrumbs,
   onRename,
   saveStatus,
   saveError,
@@ -156,9 +159,14 @@ export function EditorHeader({
       {/* Breadcrumb row */}
       <div className="editor-breadcrumb">
         <Icon name="document" className="editor-breadcrumb__icon" />
-        <span className="editor-breadcrumb__segment">Notes</span>
-        <span className="editor-breadcrumb__divider">/</span>
-        <span className="editor-breadcrumb__current">{title || "Untitled"}</span>
+        {breadcrumbs.map((crumb, index) => (
+          <span className="editor-breadcrumb__part" key={crumb.id}>
+            {index > 0 && <span className="editor-breadcrumb__divider">/</span>}
+            <span className={index === breadcrumbs.length - 1 ? "editor-breadcrumb__current" : "editor-breadcrumb__segment"}>
+              {crumb.title || "Untitled"}
+            </span>
+          </span>
+        ))}
       </div>
 
       {/* Title & Actions Row */}
@@ -310,10 +318,10 @@ export function EditorHeader({
       </div>
 
       {/* Metadata Row: Save Status, Last edited time, Document stats */}
-      <div className="editor-metadata-row">
+      <div className="editor-metadata-row" aria-label="Local document status">
         <div className={`editor-status-pill editor-status-pill--${saveStatus}`}>
           <span className={`status-dot ${currentStatus.dotClass}`} aria-hidden="true" />
-          <span role="status">{currentStatus.label}</span>
+          <span role="status" aria-live="polite">{currentStatus.label}</span>
           {saveStatus === "error" && (
             <button type="button" className="editor-status-retry" onClick={onRetrySave}>
               Retry

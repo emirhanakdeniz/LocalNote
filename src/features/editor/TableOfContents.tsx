@@ -111,7 +111,8 @@ export function TableOfContents({
     if (!editorRoot) return;
     const element = editorRoot.querySelector(`[data-id="${id}"]`);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      element.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
       setActiveHeadingId(id);
     }
   };

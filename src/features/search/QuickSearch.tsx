@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { searchApi } from "./api";
 import type { SearchResult } from "./api";
+import { Dialog } from "../../components/Dialog";
+import { Icon } from "../../components/Icon";
 
 type SearchStatus = "initial" | "searching" | "results" | "empty" | "error";
 
@@ -9,6 +11,17 @@ type QuickSearchProps = {
   onClose: () => void;
   onSelect: (pageId: string) => Promise<boolean>;
 };
+
+function HighlightedText({ text, query }: { text: string; query: string }) {
+  const needle = query.trim();
+  if (!needle) return text;
+  const parts = text.split(new RegExp(`(${needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi"));
+  return <>{parts.map((part, index) =>
+    part.toLocaleLowerCase() === needle.toLocaleLowerCase()
+      ? <mark key={index}>{part}</mark>
+      : part
+  )}</>;
+}
 
 export function QuickSearch({ open, onClose, onSelect }: QuickSearchProps) {
   const [query, setQuery] = useState("");
@@ -67,20 +80,23 @@ export function QuickSearch({ open, onClose, onSelect }: QuickSearchProps) {
   };
 
   return (
-    <div className="quick-search" role="presentation" onMouseDown={onClose}>
-      <section
-        className="quick-search__dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="quick-search-title"
-        onMouseDown={(event) => event.stopPropagation()}
-      >
+    <Dialog
+      open={open}
+      title="Search notes"
+      onClose={onClose}
+      className="quick-search__dialog"
+      backdropClassName="quick-search"
+      initialFocusRef={inputRef}
+    >
+      <section className="quick-search__content">
         <h2 id="quick-search-title" className="quick-search__title">
           Search notes
         </h2>
-        <input
-          ref={inputRef}
-          className="quick-search__input"
+        <div className="quick-search__input-wrap">
+          <Icon name="search" className="quick-search__input-icon" />
+          <input
+            ref={inputRef}
+            className="quick-search__input"
           type="search"
           aria-label="Search pages and notes"
           aria-controls="quick-search-results"
@@ -103,7 +119,8 @@ export function QuickSearch({ open, onClose, onSelect }: QuickSearchProps) {
               void openResult(results[selectedIndex]);
             }
           }}
-        />
+          />
+        </div>
 
         <div className="quick-search__body" id="quick-search-results">
           {status === "initial" && (
@@ -133,7 +150,7 @@ export function QuickSearch({ open, onClose, onSelect }: QuickSearchProps) {
                     onClick={() => void openResult(result)}
                   >
                     <strong>{result.title}</strong>
-                    {result.snippet && <span>{result.snippet}</span>}
+                    {result.snippet && <span><HighlightedText text={result.snippet} query={query} /></span>}
                   </button>
                 </li>
               ))}
@@ -141,11 +158,11 @@ export function QuickSearch({ open, onClose, onSelect }: QuickSearchProps) {
           )}
         </div>
         <footer className="quick-search__footer">
-          <span>↑↓ Navigate</span>
-          <span>Enter Open</span>
-          <span>Esc Close</span>
+          <span><kbd>↑↓</kbd> Navigate</span>
+          <span><kbd>Enter</kbd> Open</span>
+          <span><kbd>Esc</kbd> Close</span>
         </footer>
       </section>
-    </div>
+    </Dialog>
   );
 }

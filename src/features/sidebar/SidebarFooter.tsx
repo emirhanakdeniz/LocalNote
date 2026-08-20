@@ -80,16 +80,15 @@ export function SidebarFooter({
         >
           <Icon name="settings" className="sidebar-footer__icon" />
           <span>Settings</span>
+          {pageCount !== undefined && pageCount > 0 && (
+            <span
+              className="sidebar-footer__stats"
+              title={`${pageCount} notes stored locally`}
+            >
+              {pageCount} {pageCount === 1 ? "note" : "notes"}
+            </span>
+          )}
         </button>
-
-        {pageCount !== undefined && pageCount > 0 && (
-          <span
-            className="sidebar-footer__stats"
-            title={`${pageCount} notes stored locally`}
-          >
-            {pageCount} {pageCount === 1 ? "note" : "notes"}
-          </span>
-        )}
       </div>
     </footer>
   );

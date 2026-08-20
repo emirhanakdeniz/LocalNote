@@ -204,7 +204,7 @@ export function SettingsDialog({
               >
                 <input
                   type="color"
-                  value={isValidHex(accentColor) ? normalizeHex(accentColor) : "#4c1d95"}
+                  value={isValidHex(accentColor) ? normalizeHex(accentColor) : "#3b6fe5"}
                   onChange={(e) => {
                     onAccentColorChange(e.target.value);
                     setHexInput(e.target.value.toUpperCase());
@@ -216,7 +216,7 @@ export function SettingsDialog({
                   style={{
                     backgroundColor: isValidHex(accentColor)
                       ? normalizeHex(accentColor)
-                      : "#4c1d95",
+                      : "#3b6fe5",
                   }}
                 />
               </label>
@@ -224,7 +224,7 @@ export function SettingsDialog({
                 type="text"
                 className="settings__accent-hex-input"
                 value={hexInput}
-                placeholder="#4C1D95"
+                placeholder="#3B6FE5"
                 maxLength={7}
                 spellCheck={false}
                 onChange={(e) => {
