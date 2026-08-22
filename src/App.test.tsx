@@ -10,6 +10,7 @@ const closeMock = vi.hoisted(() => vi.fn());
 const minimizeMock = vi.hoisted(() => vi.fn());
 const toggleMaximizeMock = vi.hoisted(() => vi.fn());
 const markdownSerializerMock = vi.hoisted(() => vi.fn());
+const markdownParserMock = vi.hoisted(() => vi.fn());
 const editorOptionsMock = vi.hoisted(() => vi.fn());
 const clipboardWriteMock = vi.hoisted(() => vi.fn());
 const closeHandler = vi.hoisted(() => ({
@@ -17,6 +18,19 @@ const closeHandler = vi.hoisted(() => ({
 }));
 
 vi.mock("@tauri-apps/api/core", () => ({ invoke: invokeMock }));
+vi.mock("@blocknote/core", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@blocknote/core")>();
+  return {
+    ...actual,
+    BlockNoteEditor: {
+      ...actual.BlockNoteEditor,
+      create: vi.fn(() => ({
+        blocksToMarkdownLossy: markdownSerializerMock,
+        tryParseMarkdownToBlocks: markdownParserMock,
+      })),
+    },
+  };
+});
 vi.mock("@tauri-apps/api/window", () => ({
   getCurrentWindow: () => ({
     close: closeMock,
@@ -111,6 +125,7 @@ function openPageActions(title: string) {
 function mockPageCommands(
   initialPages: Page[],
   initialDocuments: Record<string, string | null> = {},
+  markdownSources: Array<{ fileName: string; markdown: string }> = [],
 ) {
   let pages = [...initialPages];
   let trashed: Page[] = [];
@@ -221,6 +236,20 @@ function mockPageCommands(
           success: true,
         });
       }
+      if (command === "select_markdown_files") {
+        return Promise.resolve(markdownSources);
+      }
+      if (command === "import_markdown_notes") {
+        const notes = args.notes as Array<{ title: string; contentJson: string }>;
+        const firstPageId = notes.length ? `imported-${pages.length + 1}` : null;
+        notes.forEach((note, index) => {
+          const id = `imported-${pages.length + 1}`;
+          pages.push(page(id, note.title, null, pages.length));
+          documents[id] = note.contentJson;
+          if (index === 0 && firstPageId !== id) throw new Error("Unexpected import ID");
+        });
+        return Promise.resolve({ importedCount: notes.length, pages: [...pages], firstPageId });
+      }
       if (command === "open_backup_folder") {
         return Promise.resolve();
       }
@@ -257,6 +286,10 @@ describe("LocalNote page management", () => {
     markdownSerializerMock.mockReset();
     markdownSerializerMock.mockImplementation(
       (blocks) => `markdown:${JSON.stringify(blocks)}`,
+    );
+    markdownParserMock.mockReset();
+    markdownParserMock.mockImplementation(async (markdown: string) =>
+      markdown ? [{ type: "paragraph", content: markdown }] : [],
     );
     clipboardWriteMock.mockReset();
     clipboardWriteMock.mockResolvedValue(undefined);
@@ -311,7 +344,7 @@ describe("LocalNote page management", () => {
     expect(within(dialog).getByRole("heading", { name: "Storage" })).toBeVisible();
     expect(within(dialog).getByRole("heading", { name: "Backup" })).toBeVisible();
     expect(within(dialog).getByRole("heading", { name: "About" })).toBeVisible();
-    expect(within(dialog).getByText("Version 1.0.2")).toBeVisible();
+    expect(within(dialog).getByText("Version 1.1.0")).toBeVisible();
     expect(within(dialog).getByText(/stored only on this device/i)).toBeVisible();
     expect(await within(dialog).findByText("C:\\Users\\User\\AppData\\Local\\LocalNote")).toBeVisible();
 
@@ -359,6 +392,47 @@ describe("LocalNote page management", () => {
     expect(openFolderButton).toBeVisible();
     fireEvent.click(openFolderButton);
     expect(invokeMock).toHaveBeenCalledWith("open_backup_folder");
+  });
+
+  it("imports multiple Markdown files from Settings and opens the first note in an empty app", async () => {
+    mockPageCommands([], {}, [
+      { fileName: "Başlangıç.md", markdown: "İlk içerik" },
+      { fileName: "Empty.md", markdown: "" },
+    ]);
+    render(<App />);
+    await screen.findByRole("heading", { name: "No pages yet" });
+
+    fireEvent.click(screen.getByRole("button", { name: "Open settings" }));
+    const dialog = screen.getByRole("dialog", { name: "Settings" });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Import Markdown" }));
+
+    expect(await within(dialog).findByText("Import complete!")).toBeVisible();
+    expect(within(dialog).getByText("2 notes imported.")).toBeVisible();
+    expect(await screen.findByRole("heading", { name: "Başlangıç" })).toBeVisible();
+    expect(invokeMock).toHaveBeenCalledWith("import_markdown_notes", {
+      notes: [
+        { title: "Başlangıç", contentJson: JSON.stringify([{ type: "paragraph", content: "İlk içerik" }]) },
+        { title: "Empty", contentJson: "[]" },
+      ],
+    });
+  });
+
+  it("keeps the active note open after importing Markdown", async () => {
+    mockPageCommands(
+      [page("alpha", "Alpha")],
+      { alpha: JSON.stringify([{ type: "paragraph", content: "Original" }]) },
+      [{ fileName: "Imported.md", markdown: "New content" }],
+    );
+    render(<App />);
+    await screen.findByRole("heading", { name: "Alpha" });
+
+    fireEvent.click(screen.getByRole("button", { name: "Open settings" }));
+    const dialog = screen.getByRole("dialog", { name: "Settings" });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Import Markdown" }));
+
+    expect(await within(dialog).findByText("Import complete!")).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Alpha" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Imported" })).toBeVisible();
   });
 
   it("opens Settings and selects accent color presets and custom hex", async () => {

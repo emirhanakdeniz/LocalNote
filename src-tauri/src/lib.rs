@@ -1,6 +1,7 @@
 mod database;
 mod documents;
 mod export;
+mod import;
 mod pages;
 mod search;
 mod settings;
@@ -111,6 +112,19 @@ fn backup_notes(
     notes: Vec<export::BackupNoteItem>,
 ) -> Result<export::BackupResult, String> {
     export::backup_notes(&paths, notes).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+fn select_markdown_files(app: tauri::AppHandle) -> Result<Vec<import::MarkdownSource>, String> {
+    import::select_markdown_files(&app).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+fn import_markdown_notes(
+    state: tauri::State<'_, DatabaseState>,
+    notes: Vec<import::ImportNoteItem>,
+) -> Result<import::ImportResult, String> {
+    import::import_notes(&state, notes).map_err(|error| error.to_string())
 }
 
 #[tauri::command]
@@ -239,6 +253,8 @@ pub fn run() {
             search_pages,
             export_markdown,
             backup_notes,
+            select_markdown_files,
+            import_markdown_notes,
             open_backup_folder,
             get_storage_info,
             open_data_folder,

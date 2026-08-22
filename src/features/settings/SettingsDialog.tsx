@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import { Icon } from "../../components/Icon";
 import type { BackupProgress, BackupStatus } from "../export/useNotesBackup";
+import type { MarkdownImportStatus } from "../export/useMarkdownImport";
 import { ACCENT_PRESETS, isValidHex, normalizeHex } from "../theme/accent";
 import type { ThemePreference } from "../theme/api";
 import { storageApi, type SpellcheckPreference, type StorageInfo } from "./api";
@@ -20,12 +21,17 @@ type SettingsDialogProps = {
   backupDestination: string | null;
   backupExportedCount: number;
   backupError: string | null;
+  importStatus: MarkdownImportStatus;
+  importCount: number;
+  importError: string | null;
   onThemeChange: (preference: ThemePreference) => void;
   onAccentColorChange: (hex: string) => void;
   onSpellcheckChange: (preference: SpellcheckPreference) => void;
   onStartBackup: () => void;
   onOpenBackupFolder: () => void;
   onResetBackup: () => void;
+  onStartMarkdownImport: () => void;
+  onResetMarkdownImport: () => void;
   onClose: () => void;
 };
 
@@ -54,12 +60,17 @@ export function SettingsDialog({
   backupDestination,
   backupExportedCount,
   backupError,
+  importStatus,
+  importCount,
+  importError,
   onThemeChange,
   onAccentColorChange,
   onSpellcheckChange,
   onStartBackup,
   onOpenBackupFolder,
   onResetBackup,
+  onStartMarkdownImport,
+  onResetMarkdownImport,
   onClose,
 }: SettingsDialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -547,6 +558,52 @@ export function SettingsDialog({
               </button>
             </div>
           )}
+
+          <div className="settings__import-markdown">
+            <h3>Import Markdown</h3>
+            <p className="settings__field-description">
+              Choose one or more <code>.md</code> files. Each file becomes a new top-level note.
+            </p>
+            {importStatus === "success" ? (
+              <div className="settings__backup-success settings__import-feedback" role="status" aria-live="polite">
+                <div className="settings__backup-success-details">
+                  <strong>Import complete!</strong>
+                  <p>{importCount} {importCount === 1 ? "note" : "notes"} imported.</p>
+                </div>
+                <button
+                  type="button"
+                  className="settings__button settings__button--secondary"
+                  onClick={onResetMarkdownImport}
+                >
+                  Import More
+                </button>
+              </div>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="settings__button settings__button--secondary"
+                  onClick={onStartMarkdownImport}
+                  disabled={importStatus === "in_progress"}
+                >
+                  {importStatus === "in_progress" && <span className="settings__backup-spinner" aria-hidden="true" />}
+                  <span>{importStatus === "in_progress" ? "Importing Markdown…" : "Import Markdown"}</span>
+                </button>
+                {importStatus === "error" && (
+                  <div className="settings__backup-error settings__import-feedback" role="alert">
+                    <p className="settings__error">{importError}</p>
+                    <button
+                      type="button"
+                      className="settings__button settings__button--secondary"
+                      onClick={onStartMarkdownImport}
+                    >
+                      Retry Import
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </section>
 
         <section className="settings__section settings__about" aria-labelledby="settings-about">
@@ -555,7 +612,7 @@ export function SettingsDialog({
             <img src="/app-icon.png" alt="" />
             <div>
               <strong>LocalNote</strong>
-              <span>Version 1.0.2</span>
+              <span>Version 1.1.0</span>
             </div>
           </div>
           <p>Fast, private notes stored only on this device. No account or cloud service.</p>

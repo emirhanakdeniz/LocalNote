@@ -3,6 +3,7 @@ import { EditorErrorBoundary } from "../features/editor/EditorErrorBoundary";
 import { LocalNoteEditor } from "../features/editor/LocalNoteEditor";
 import { useDocumentPersistence } from "../features/editor/useDocumentPersistence";
 import { useMarkdownExport } from "../features/export/useMarkdownExport";
+import { useMarkdownImport } from "../features/export/useMarkdownImport";
 import { useNotesBackup } from "../features/export/useNotesBackup";
 import { usePageManagement } from "../features/pages/usePageManagement";
 import { QuickSearch } from "../features/search/QuickSearch";
@@ -34,6 +35,18 @@ export function AppShell() {
   const settingsTriggerRef = useRef<HTMLButtonElement>(null);
   const documents = useDocumentPersistence();
   const backup = useNotesBackup(documents.flush);
+  const handleMarkdownImported = useCallback(
+    async (result: import("../features/export/api").MarkdownImportResult) => {
+      pageManagement.setPagesList(result.pages);
+      if (!pageManagement.activePageId && result.firstPageId) {
+        if (await pageManagement.selectPage(result.firstPageId)) {
+          await documents.loadPage(result.firstPageId, false);
+        }
+      }
+    },
+    [documents, pageManagement],
+  );
+  const markdownImport = useMarkdownImport(handleMarkdownImported);
   const markdownExport = useMarkdownExport(
     pageManagement.activePageId,
     documents.flush,
@@ -289,12 +302,17 @@ export function AppShell() {
         backupDestination={backup.destinationPath}
         backupExportedCount={backup.exportedCount}
         backupError={backup.error}
+        importStatus={markdownImport.status}
+        importCount={markdownImport.importedCount}
+        importError={markdownImport.error}
         onThemeChange={(preference) => void theme.setTheme(preference)}
         onAccentColorChange={(hex) => void accent.setAccentColor(hex)}
         onSpellcheckChange={(preference) => void spellcheck.setSpellcheck(preference)}
         onStartBackup={() => void backup.startBackup()}
         onOpenBackupFolder={() => void backup.openFolder()}
         onResetBackup={backup.reset}
+        onStartMarkdownImport={() => void markdownImport.startImport()}
+        onResetMarkdownImport={markdownImport.reset}
         onClose={closeSettings}
       />
       <TrashDialog

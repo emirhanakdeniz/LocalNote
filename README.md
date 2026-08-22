@@ -195,7 +195,7 @@ Ensure you have the following installed on your Windows machine:
 
 Download the latest release from the **[Releases](../../releases)** page:
 
-- **`LocalNote_1.0.2_x64-setup.exe`**: Standard Windows installer (NSIS)
+- **`LocalNote_1.1.0_x64-setup.exe`**: Standard Windows installer (NSIS)
 - **`localnote.exe`**: Portable standalone executable
 
 ### Development
@@ -227,7 +227,7 @@ npm run tauri build
 The compiled binaries will be output to:
 ```text
 src-tauri/target/release/localnote.exe
-src-tauri/target/release/bundle/nsis/LocalNote_1.0.2_x64-setup.exe
+src-tauri/target/release/bundle/nsis/LocalNote_1.1.0_x64-setup.exe
 ```
 
 ---
@@ -257,7 +257,7 @@ Markdown backups are deliberately kept separate at:
 %USERPROFILE%\Documents\LocalNote Backups\
 ```
 
-Open **Settings → Storage** to view, copy, or open either location. **Backup all notes** continues to write readable Markdown copies to the Documents folder, while individual Markdown exports go to the location selected in the save dialog.
+Open **Settings → Storage** to view, copy, or open either location. **Backup all notes** continues to write readable Markdown copies to the Documents folder, while individual Markdown exports go to the location selected in the save dialog. Use **Settings → Backup → Import Markdown** to select one or more `.md` files and add each one as a new top-level note without replacing existing notes.
 
 LocalNote does not migrate or modify data from the former `%APPDATA%\com.localnote.desktop` location. Existing Markdown backups in `Documents\LocalNote Notes` are left untouched; new backups are written to `Documents\LocalNote Backups`.
 

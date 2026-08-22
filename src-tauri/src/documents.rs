@@ -77,7 +77,7 @@ fn validate_page_id(page_id: &str) -> Result<(), DatabaseError> {
     Ok(())
 }
 
-fn validate_content(content_json: &str) -> Result<(), DatabaseError> {
+pub(crate) fn validate_content(content_json: &str) -> Result<(), DatabaseError> {
     if content_json.len() > MAX_DOCUMENT_BYTES {
         return Err(DatabaseError::message(format!(
             "Document JSON cannot exceed {MAX_DOCUMENT_BYTES} bytes"

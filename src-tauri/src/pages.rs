@@ -301,7 +301,7 @@ pub(crate) fn empty_trash(state: &DatabaseState) -> Result<(), DatabaseError> {
     Ok(())
 }
 
-fn list_with_connection(connection: &Connection) -> Result<Vec<Page>, DatabaseError> {
+pub(crate) fn list_with_connection(connection: &Connection) -> Result<Vec<Page>, DatabaseError> {
     let mut statement = connection.prepare(
         "SELECT id, title, parent_id, position, is_favorite,
                 created_at, updated_at, last_opened_at, deleted_at
