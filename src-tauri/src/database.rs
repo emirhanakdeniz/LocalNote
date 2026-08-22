@@ -9,7 +9,6 @@ use std::{
     time::Duration,
 };
 
-const DATABASE_FILENAME: &str = "localnote.db";
 const BUSY_TIMEOUT: Duration = Duration::from_secs(5);
 
 struct Migration {
@@ -111,15 +110,15 @@ pub(crate) struct DatabaseStatus {
     fts5_available: bool,
 }
 
-pub(crate) fn initialize(app_data_dir: &Path) -> Result<DatabaseState, DatabaseError> {
-    fs::create_dir_all(app_data_dir).map_err(|error| {
-        DatabaseError::context(
-            "Could not create the LocalNote application data directory",
-            error,
-        )
+pub(crate) fn initialize(database_path: &Path) -> Result<DatabaseState, DatabaseError> {
+    let database_directory = database_path.parent().ok_or_else(|| {
+        DatabaseError::message("The LocalNote database path has no parent directory")
+    })?;
+    fs::create_dir_all(database_directory).map_err(|error| {
+        DatabaseError::context("Could not create the LocalNote database directory", error)
     })?;
 
-    let path = app_data_dir.join(DATABASE_FILENAME);
+    let path = database_path.to_path_buf();
     let mut connection = open_connection(&path)?;
     migrate(&mut connection)?;
     verify_fts5(&connection)?;
@@ -254,13 +253,14 @@ mod tests {
 
     fn test_database() -> (TempDir, DatabaseState) {
         let directory = TempDir::new().expect("temporary directory should be created");
-        let state = initialize(directory.path()).expect("database should initialize");
+        let state =
+            initialize(&directory.path().join("localnote.db")).expect("database should initialize");
         (directory, state)
     }
 
     #[test]
     fn creates_database_and_applies_migration_once() {
-        let (directory, state) = test_database();
+        let (_directory, state) = test_database();
         assert!(state.path.exists());
 
         let connection = open_connection(&state.path).expect("database should reopen");
@@ -279,7 +279,7 @@ mod tests {
             .unwrap();
         assert_eq!(tables, ["documents", "pages", "settings"]);
 
-        let repeated = initialize(directory.path()).expect("repeated initialization should work");
+        let repeated = initialize(&state.path).expect("repeated initialization should work");
         let repeated_connection = open_connection(&repeated.path).unwrap();
         assert_eq!(schema_version(&repeated_connection).unwrap(), 3);
     }
@@ -381,7 +381,7 @@ mod tests {
     #[test]
     fn phase_two_migration_creates_and_backfills_search_without_touching_documents() {
         let directory = TempDir::new().unwrap();
-        let path = directory.path().join(DATABASE_FILENAME);
+        let path = directory.path().join("localnote.db");
         let phase_one_connection = open_connection(&path).unwrap();
         phase_one_connection
             .execute_batch(MIGRATIONS[0].sql)
@@ -414,7 +414,7 @@ mod tests {
         }
         drop(phase_one_connection);
 
-        let state = initialize(directory.path()).unwrap();
+        let state = initialize(&path).unwrap();
         let connection = connection(&state).unwrap();
         assert_eq!(schema_version(&connection).unwrap(), 3);
         let search_table: i64 = connection

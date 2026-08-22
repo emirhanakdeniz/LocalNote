@@ -187,21 +187,21 @@ mod tests {
     #[test]
     fn theme_defaults_to_system_and_persists_valid_preferences() {
         let directory = TempDir::new().unwrap();
-        let state = database::initialize(directory.path()).unwrap();
+        let state = database::initialize(&directory.path().join("localnote.db")).unwrap();
         assert_eq!(get_theme(&state).unwrap(), ThemePreference::System);
 
         assert_eq!(
             set_theme(&state, ThemePreference::Dark).unwrap(),
             ThemePreference::Dark
         );
-        let reopened = database::initialize(directory.path()).unwrap();
+        let reopened = database::initialize(&directory.path().join("localnote.db")).unwrap();
         assert_eq!(get_theme(&reopened).unwrap(), ThemePreference::Dark);
     }
 
     #[test]
     fn invalid_stored_theme_is_reported_instead_of_silently_applied() {
         let directory = TempDir::new().unwrap();
-        let state = database::initialize(directory.path()).unwrap();
+        let state = database::initialize(&directory.path().join("localnote.db")).unwrap();
         let connection = database::connection(&state).unwrap();
         connection
             .execute(
@@ -216,7 +216,7 @@ mod tests {
     #[test]
     fn spellcheck_defaults_to_system_and_persists_valid_preferences() {
         let directory = TempDir::new().unwrap();
-        let state = database::initialize(directory.path()).unwrap();
+        let state = database::initialize(&directory.path().join("localnote.db")).unwrap();
         assert_eq!(
             get_spellcheck(&state).unwrap(),
             SpellcheckPreference::System
@@ -226,7 +226,7 @@ mod tests {
             set_spellcheck(&state, SpellcheckPreference::Off).unwrap(),
             SpellcheckPreference::Off
         );
-        let reopened = database::initialize(directory.path()).unwrap();
+        let reopened = database::initialize(&directory.path().join("localnote.db")).unwrap();
         assert_eq!(
             get_spellcheck(&reopened).unwrap(),
             SpellcheckPreference::Off
@@ -236,7 +236,7 @@ mod tests {
     #[test]
     fn invalid_stored_spellcheck_is_reported_instead_of_silently_applied() {
         let directory = TempDir::new().unwrap();
-        let state = database::initialize(directory.path()).unwrap();
+        let state = database::initialize(&directory.path().join("localnote.db")).unwrap();
         let connection = database::connection(&state).unwrap();
         connection
             .execute(
@@ -251,7 +251,7 @@ mod tests {
     #[test]
     fn accent_color_defaults_and_persists_valid_hex() {
         let directory = TempDir::new().unwrap();
-        let state = database::initialize(directory.path()).unwrap();
+        let state = database::initialize(&directory.path().join("localnote.db")).unwrap();
         assert_eq!(
             get_accent_color(&state).unwrap(),
             DEFAULT_ACCENT_COLOR
@@ -261,7 +261,7 @@ mod tests {
             set_accent_color(&state, "#14532D").unwrap(),
             "#14532d"
         );
-        let reopened = database::initialize(directory.path()).unwrap();
+        let reopened = database::initialize(&directory.path().join("localnote.db")).unwrap();
         assert_eq!(get_accent_color(&reopened).unwrap(), "#14532d");
 
         // 3-character hex expansion
@@ -271,7 +271,7 @@ mod tests {
     #[test]
     fn invalid_accent_color_is_rejected() {
         let directory = TempDir::new().unwrap();
-        let state = database::initialize(directory.path()).unwrap();
+        let state = database::initialize(&directory.path().join("localnote.db")).unwrap();
 
         assert!(set_accent_color(&state, "not-a-color").is_err());
         assert!(set_accent_color(&state, "#12").is_err());

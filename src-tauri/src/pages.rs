@@ -451,7 +451,8 @@ mod tests {
 
     fn page_database() -> (TempDir, DatabaseState) {
         let directory = TempDir::new().expect("temporary directory should be created");
-        let state = database::initialize(directory.path()).expect("database should initialize");
+        let state = database::initialize(&directory.path().join("localnote.db"))
+            .expect("database should initialize");
         (directory, state)
     }
 
@@ -477,7 +478,7 @@ mod tests {
         assert!(pages[0].created_at.contains('T'));
         assert!(pages[0].created_at.ends_with('Z'));
 
-        let reopened = database::initialize(directory.path()).unwrap();
+        let reopened = database::initialize(&directory.path().join("localnote.db")).unwrap();
         assert_eq!(list(&reopened).unwrap(), pages);
     }
 
@@ -586,7 +587,7 @@ mod tests {
         let page = create(&state, None).unwrap();
 
         assert!(set_favorite(&state, &page.id, true).unwrap().is_favorite);
-        let reopened = database::initialize(directory.path()).unwrap();
+        let reopened = database::initialize(&directory.path().join("localnote.db")).unwrap();
         assert!(list(&reopened).unwrap()[0].is_favorite);
         assert!(
             !set_favorite(&reopened, &page.id, false)

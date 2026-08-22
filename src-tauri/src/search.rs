@@ -226,7 +226,7 @@ mod tests {
 
     fn search_database() -> (TempDir, DatabaseState) {
         let directory = TempDir::new().unwrap();
-        let state = database::initialize(directory.path()).unwrap();
+        let state = database::initialize(&directory.path().join("localnote.db")).unwrap();
         (directory, state)
     }
 

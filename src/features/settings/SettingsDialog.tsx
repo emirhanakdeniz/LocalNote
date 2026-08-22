@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
+import { Icon } from "../../components/Icon";
 import type { BackupProgress, BackupStatus } from "../export/useNotesBackup";
 import { ACCENT_PRESETS, isValidHex, normalizeHex } from "../theme/accent";
 import type { ThemePreference } from "../theme/api";
-import type { SpellcheckPreference } from "./api";
+import { storageApi, type SpellcheckPreference, type StorageInfo } from "./api";
 
 type SettingsDialogProps = {
   open: boolean;
@@ -63,10 +64,38 @@ export function SettingsDialog({
 }: SettingsDialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const [hexInput, setHexInput] = useState(accentColor.toUpperCase());
+  const [storageInfo, setStorageInfo] = useState<StorageInfo | null>(null);
+  const [storageError, setStorageError] = useState<string | null>(null);
+  const [storageFeedback, setStorageFeedback] = useState<{
+    target: "data" | "backup";
+    kind: "success" | "error";
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
     setHexInput(accentColor.toUpperCase());
   }, [accentColor]);
+
+  useEffect(() => {
+    if (!open) return;
+    let active = true;
+    setStorageError(null);
+    setStorageFeedback(null);
+    void storageApi.getInfo().then(
+      (info) => {
+        if (active) setStorageInfo(info);
+      },
+      (reason: unknown) => {
+        if (active) {
+          setStorageInfo(null);
+          setStorageError(`Could not load storage locations: ${reason instanceof Error ? reason.message : String(reason)}`);
+        }
+      },
+    );
+    return () => {
+      active = false;
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -112,6 +141,34 @@ export function SettingsDialog({
   const close = () => {
     onClose();
     triggerRef.current?.focus();
+  };
+
+  const copyStoragePath = async (target: "data" | "backup", path: string) => {
+    try {
+      await navigator.clipboard.writeText(path);
+      setStorageFeedback({ target, kind: "success", message: "Path copied." });
+    } catch (reason) {
+      setStorageFeedback({
+        target,
+        kind: "error",
+        message: `Could not copy path: ${reason instanceof Error ? reason.message : String(reason)}`,
+      });
+    }
+  };
+
+  const openStorageFolder = async (target: "data" | "backup") => {
+    try {
+      await (target === "data"
+        ? storageApi.openDataFolder()
+        : storageApi.openBackupFolder());
+      setStorageFeedback({ target, kind: "success", message: "Folder opened." });
+    } catch (reason) {
+      setStorageFeedback({
+        target,
+        kind: "error",
+        message: `Could not open folder: ${reason instanceof Error ? reason.message : String(reason)}`,
+      });
+    }
   };
 
   return (
@@ -271,6 +328,116 @@ export function SettingsDialog({
             </div>
           </fieldset>
           {spellcheckError && <p className="settings__error" role="alert">{spellcheckError}</p>}
+        </section>
+
+        <section className="settings__section" aria-labelledby="settings-storage">
+          <h2 id="settings-storage">Storage</h2>
+          <p className="settings__field-description">
+            LocalNote keeps working data and Markdown backups in separate locations.
+          </p>
+
+          {storageInfo ? (
+            <div className="settings__storage-locations">
+              <article className="settings__storage-card">
+                <div className="settings__storage-heading">
+                  <div>
+                    <strong>Live app data</strong>
+                    <span>Notes, settings, and app working files</span>
+                  </div>
+                  <span className="settings__storage-badge">Local</span>
+                </div>
+                <code className="settings__storage-path" title={storageInfo.dataRoot}>
+                  {storageInfo.dataRoot}
+                </code>
+                <dl className="settings__storage-details">
+                  <div>
+                    <dt>Database</dt>
+                    <dd title={storageInfo.databasePath}>{storageInfo.databasePath}</dd>
+                  </div>
+                  <div>
+                    <dt>WebView</dt>
+                    <dd title={storageInfo.webviewDataPath}>{storageInfo.webviewDataPath}</dd>
+                  </div>
+                </dl>
+                <p className="settings__storage-note">
+                  The WebView folder contains the app cache and interface preferences.
+                </p>
+                <div className="settings__storage-actions">
+                  <button
+                    type="button"
+                    className="settings__button settings__button--secondary"
+                    aria-label="Open live app data folder"
+                    onClick={() => void openStorageFolder("data")}
+                  >
+                    <Icon name="folder-plus" />
+                    Open folder
+                  </button>
+                  <button
+                    type="button"
+                    className="settings__button settings__button--secondary"
+                    aria-label="Copy live app data path"
+                    onClick={() => void copyStoragePath("data", storageInfo.dataRoot)}
+                  >
+                    <Icon name="copy" />
+                    Copy path
+                  </button>
+                </div>
+                {storageFeedback?.target === "data" && (
+                  <p
+                    className={`settings__storage-feedback settings__storage-feedback--${storageFeedback.kind}`}
+                    role={storageFeedback.kind === "error" ? "alert" : "status"}
+                  >
+                    {storageFeedback.message}
+                  </p>
+                )}
+              </article>
+
+              <article className="settings__storage-card">
+                <div className="settings__storage-heading">
+                  <div>
+                    <strong>Markdown backups</strong>
+                    <span>Readable copies created with Backup all notes</span>
+                  </div>
+                  <span className="settings__storage-badge settings__storage-badge--backup">Documents</span>
+                </div>
+                <code className="settings__storage-path" title={storageInfo.backupPath}>
+                  {storageInfo.backupPath}
+                </code>
+                <div className="settings__storage-actions">
+                  <button
+                    type="button"
+                    className="settings__button settings__button--secondary"
+                    aria-label="Open Markdown backup folder"
+                    onClick={() => void openStorageFolder("backup")}
+                  >
+                    <Icon name="folder-plus" />
+                    Open folder
+                  </button>
+                  <button
+                    type="button"
+                    className="settings__button settings__button--secondary"
+                    aria-label="Copy Markdown backup path"
+                    onClick={() => void copyStoragePath("backup", storageInfo.backupPath)}
+                  >
+                    <Icon name="copy" />
+                    Copy path
+                  </button>
+                </div>
+                {storageFeedback?.target === "backup" && (
+                  <p
+                    className={`settings__storage-feedback settings__storage-feedback--${storageFeedback.kind}`}
+                    role={storageFeedback.kind === "error" ? "alert" : "status"}
+                  >
+                    {storageFeedback.message}
+                  </p>
+                )}
+              </article>
+            </div>
+          ) : storageError ? (
+            <p className="settings__error" role="alert">{storageError}</p>
+          ) : (
+            <p className="settings__storage-loading" role="status">Loading storage locations…</p>
+          )}
         </section>
 
         <section className="settings__section" aria-labelledby="settings-backup">

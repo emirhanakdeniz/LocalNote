@@ -1,4 +1,7 @@
-use crate::database::{self, DatabaseError, DatabaseState};
+use crate::{
+    database::{self, DatabaseError, DatabaseState},
+    storage::{self, StoragePaths},
+};
 use rusqlite::OptionalExtension;
 use serde::{Deserialize, Serialize};
 use std::{
@@ -74,20 +77,12 @@ pub(crate) fn export_markdown(
 }
 
 pub(crate) fn backup_notes(
-    app: &AppHandle,
+    paths: &StoragePaths,
     notes: Vec<BackupNoteItem>,
 ) -> Result<BackupResult, DatabaseError> {
-    use tauri::Manager;
-    let docs_dir = app
-        .path()
-        .document_dir()
-        .map_err(|error| DatabaseError::context("Could not resolve Documents directory", error))?;
+    let backup_dir = storage::ensure_backup_directory(paths)?;
 
-    let backup_dir = docs_dir.join("LocalNote Notes");
-    fs::create_dir_all(&backup_dir)
-        .map_err(|error| DatabaseError::context("Could not create backup directory", error))?;
-
-    backup_notes_to_directory(&backup_dir, &notes)?;
+    backup_notes_to_directory(backup_dir, &notes)?;
 
     Ok(BackupResult {
         destination_path: backup_dir.to_string_lossy().to_string(),
@@ -151,38 +146,9 @@ pub(crate) fn backup_notes_to_directory(
     Ok(())
 }
 
-pub(crate) fn open_backup_folder(app: &AppHandle) -> Result<(), DatabaseError> {
-    use tauri::Manager;
-    let docs_dir = app
-        .path()
-        .document_dir()
-        .map_err(|error| DatabaseError::context("Could not resolve Documents directory", error))?;
-    let backup_dir = docs_dir.join("LocalNote Notes");
-    let _ = fs::create_dir_all(&backup_dir);
-
-    #[cfg(target_os = "windows")]
-    {
-        std::process::Command::new("explorer")
-            .arg(&backup_dir)
-            .spawn()
-            .map_err(|error| DatabaseError::context("Could not open File Explorer", error))?;
-    }
-    #[cfg(target_os = "macos")]
-    {
-        std::process::Command::new("open")
-            .arg(&backup_dir)
-            .spawn()
-            .map_err(|error| DatabaseError::context("Could not open Finder", error))?;
-    }
-    #[cfg(target_os = "linux")]
-    {
-        std::process::Command::new("xdg-open")
-            .arg(&backup_dir)
-            .spawn()
-            .map_err(|error| DatabaseError::context("Could not open file manager", error))?;
-    }
-
-    Ok(())
+pub(crate) fn open_backup_folder(paths: &StoragePaths) -> Result<(), DatabaseError> {
+    let backup_dir = storage::ensure_backup_directory(paths)?;
+    storage::open_directory(backup_dir)
 }
 
 fn persisted_export_source(
@@ -284,7 +250,8 @@ mod tests {
 
     fn export_database() -> (TempDir, DatabaseState) {
         let directory = TempDir::new().expect("temporary directory should be created");
-        let state = database::initialize(directory.path()).expect("database should initialize");
+        let state = database::initialize(&directory.path().join("localnote.db"))
+            .expect("database should initialize");
         (directory, state)
     }
 

@@ -1667,7 +1667,7 @@ button.page-tree__disclosure:hover {
 }
 
 .settings__dialog {
-  width: min(27rem, 100%);
+  width: min(34rem, 100%);
   max-height: calc(100dvh - 2rem);
   overflow-y: auto;
   border: 1px solid var(--color-border);
@@ -2087,6 +2087,144 @@ button.page-tree__disclosure:hover {
   flex-direction: column;
   gap: 0.5rem;
   align-items: flex-start;
+}
+
+/* Settings Storage */
+.settings__storage-locations {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.7rem;
+}
+
+.settings__storage-card {
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-editor);
+}
+
+.settings__storage-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.settings__storage-heading > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.settings__storage-heading strong {
+  color: var(--color-text);
+  font-size: 0.78rem;
+}
+
+.settings__storage-heading span:not(.settings__storage-badge) {
+  color: var(--color-text-subtle);
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+.settings__storage-badge {
+  flex: none;
+  padding: 0.15rem 0.38rem;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 34%, var(--color-border));
+  border-radius: var(--radius-full);
+  color: var(--color-accent);
+  background: var(--color-accent-subtle);
+  font-size: 0.58rem;
+  font-weight: 650;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
+.settings__storage-badge--backup {
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+  background: var(--color-surface-hover);
+}
+
+.settings__storage-path {
+  display: block;
+  margin-top: 0.55rem;
+  padding: 0.42rem 0.5rem;
+  overflow: hidden;
+  border: 1px solid var(--color-code-border);
+  border-radius: var(--radius-xs);
+  color: var(--color-text);
+  background: var(--color-code-background);
+  font-family: "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+  font-size: 0.66rem;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings__storage-details {
+  display: grid;
+  gap: 0.32rem;
+  margin: 0.6rem 0 0;
+}
+
+.settings__storage-details > div {
+  display: grid;
+  grid-template-columns: 4.2rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.45rem;
+}
+
+.settings__storage-details dt {
+  color: var(--color-text-subtle);
+  font-size: 0.63rem;
+  font-weight: 600;
+}
+
+.settings__storage-details dd {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-family: "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+  font-size: 0.61rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings__storage-note,
+.settings__storage-loading {
+  margin: 0.5rem 0 0;
+  color: var(--color-text-subtle);
+  font-size: 0.66rem;
+  line-height: 1.4;
+}
+
+.settings__storage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+}
+
+.settings__storage-actions .icon {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+.settings__storage-feedback {
+  margin: 0.5rem 0 0;
+  font-size: 0.68rem;
+}
+
+.settings__storage-feedback--success {
+  color: var(--color-success);
+}
+
+.settings__storage-feedback--error {
+  color: var(--color-danger);
 }
 
 .settings__about {

@@ -4,6 +4,7 @@ mod export;
 mod pages;
 mod search;
 mod settings;
+mod storage;
 
 use database::{DatabaseState, DatabaseStatus};
 use documents::Document;
@@ -106,15 +107,25 @@ fn export_markdown(
 
 #[tauri::command]
 fn backup_notes(
-    app: tauri::AppHandle,
+    paths: tauri::State<'_, storage::StoragePaths>,
     notes: Vec<export::BackupNoteItem>,
 ) -> Result<export::BackupResult, String> {
-    export::backup_notes(&app, notes).map_err(|error| error.to_string())
+    export::backup_notes(&paths, notes).map_err(|error| error.to_string())
 }
 
 #[tauri::command]
-fn open_backup_folder(app: tauri::AppHandle) -> Result<(), String> {
-    export::open_backup_folder(&app).map_err(|error| error.to_string())
+fn open_backup_folder(paths: tauri::State<'_, storage::StoragePaths>) -> Result<(), String> {
+    export::open_backup_folder(&paths).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+fn get_storage_info(paths: tauri::State<'_, storage::StoragePaths>) -> storage::StoragePaths {
+    paths.inner().clone()
+}
+
+#[tauri::command]
+fn open_data_folder(paths: tauri::State<'_, storage::StoragePaths>) -> Result<(), String> {
+    storage::open_directory(&paths.data_root).map_err(|error| error.to_string())
 }
 
 #[tauri::command]
@@ -186,20 +197,32 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
-            let app_data_dir = app.path().app_data_dir()?;
-            let database_state = database::initialize(&app_data_dir)?;
+            let storage_paths = storage::resolve(app.handle())?;
+            storage_paths.prepare_live_directories()?;
+            let database_state = database::initialize(&storage_paths.database_path)?;
             app.manage(database_state);
 
+            let window_config = app
+                .config()
+                .app
+                .windows
+                .iter()
+                .find(|config| config.label == "main")
+                .cloned()
+                .ok_or("The main window configuration is missing")?;
+            let window = tauri::WebviewWindowBuilder::from_config(app, &window_config)?
+                .data_directory(storage_paths.webview_data_path.clone())
+                .build()?;
+            app.manage(storage_paths);
+
             #[cfg(windows)]
-            if let Some(window) = app.get_webview_window("main") {
-                window.with_webview(|webview| unsafe {
-                    if let Ok(core_webview) = webview.controller().CoreWebView2() {
-                        if let Ok(settings) = core_webview.Settings() {
-                            let _ = settings.SetAreDefaultContextMenusEnabled(false);
-                        }
+            window.with_webview(|webview| unsafe {
+                if let Ok(core_webview) = webview.controller().CoreWebView2() {
+                    if let Ok(settings) = core_webview.Settings() {
+                        let _ = settings.SetAreDefaultContextMenusEnabled(false);
                     }
-                })?;
-            }
+                }
+            })?;
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -217,6 +240,8 @@ pub fn run() {
             export_markdown,
             backup_notes,
             open_backup_folder,
+            get_storage_info,
+            open_data_folder,
             get_theme,
             set_theme,
             get_spellcheck,

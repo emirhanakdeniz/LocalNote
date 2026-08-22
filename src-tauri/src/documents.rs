@@ -119,7 +119,8 @@ mod tests {
 
     fn document_database() -> (TempDir, DatabaseState) {
         let directory = TempDir::new().expect("temporary directory should be created");
-        let state = database::initialize(directory.path()).expect("database should initialize");
+        let state = database::initialize(&directory.path().join("localnote.db"))
+            .expect("database should initialize");
         (directory, state)
     }
 
@@ -166,7 +167,7 @@ mod tests {
         let content = r#"[{"id":"block-1","type":"paragraph","props":{"textColor":"default"},"content":[{"type":"text","text":"A & B","styles":{"bold":true}}],"children":[]}]"#;
         save(&state, &page.id, content).unwrap();
 
-        let reopened = database::initialize(directory.path()).unwrap();
+        let reopened = database::initialize(&directory.path().join("localnote.db")).unwrap();
         assert_eq!(
             load(&reopened, &page.id).unwrap().content_json.as_deref(),
             Some(content)

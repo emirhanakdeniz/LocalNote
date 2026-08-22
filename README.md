@@ -42,6 +42,7 @@ It brings the familiar, flexible block-based editing experience of modern produc
 - 🎨 **Themes & Accent Palettes**: Frost light, Night dark, and System themes, Local Blue as the default for new installations, existing curated accents, and custom HEX color input.
 - 🛡️ **Ironclad Data Safety**: Debounced autosave with a serialized write queue, flush-before-load page switching, window close protection, and non-destructive recovery that never silently wipes malformed documents.
 - 📤 **Markdown Export**: Export any note to standard `.md` format with sanitized, OS-safe file naming.
+- 💾 **Transparent Local Storage**: Inspect, copy, or open the live data and Markdown backup locations directly from Settings.
 - 🔒 **Private by Design**: Zero telemetry, analytics, authentication, or network APIs — fully functional offline, guarded by a strict CSP (`default-src 'self'`).
 
 ---
@@ -123,7 +124,7 @@ flowchart TD
     end
 
     Frontend <==>|"Typed Tauri IPC (invoke / events)"| Backend
-    Backend -->|"%APPDATA%\\com.localnote.desktop\\localnote.db"| DB[("Local SQLite Storage")]
+    Backend -->|"%LOCALAPPDATA%\\LocalNote\\Data\\localnote.db"| DB[("Local SQLite Storage")]
 ```
 
 - **Desktop Runtime**: [Tauri 2](https://v2.tauri.app/) (Rust + OS WebView2)
@@ -228,6 +229,37 @@ The compiled binaries will be output to:
 src-tauri/target/release/localnote.exe
 src-tauri/target/release/bundle/nsis/LocalNote_1.0.2_x64-setup.exe
 ```
+
+---
+
+## Local Data & Backups
+
+LocalNote keeps its live Windows data under one readable root:
+
+```text
+%LOCALAPPDATA%\LocalNote\
+├── Data\
+│   ├── localnote.db
+│   ├── localnote.db-wal
+│   └── localnote.db-shm
+└── WebView\
+    └── main\
+        ├── Local Storage\
+        ├── Cache\
+        └── other WebView2 working files
+```
+
+The database contains notes and application settings. The WebView directory contains WebView2 cache files and local interface preferences. SQLite WAL and shared-memory files remain next to the database in `Data`.
+
+Markdown backups are deliberately kept separate at:
+
+```text
+%USERPROFILE%\Documents\LocalNote Notes\
+```
+
+Open **Settings → Storage** to view, copy, or open either location. **Backup all notes** continues to write readable Markdown copies to the Documents folder, while individual Markdown exports go to the location selected in the save dialog.
+
+LocalNote does not migrate or modify data from the former `%APPDATA%\com.localnote.desktop` location. Existing Markdown backups in `Documents\LocalNote Notes` remain available and continue to be used.
 
 ---
 

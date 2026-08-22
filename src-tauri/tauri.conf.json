@@ -13,6 +13,7 @@
     "windows": [
       {
         "label": "main",
+        "create": false,
         "title": "LocalNote",
         "width": 1100,
         "height": 760,

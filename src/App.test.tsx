@@ -224,6 +224,15 @@ function mockPageCommands(
       if (command === "open_backup_folder") {
         return Promise.resolve();
       }
+      if (command === "open_data_folder") return Promise.resolve();
+      if (command === "get_storage_info") {
+        return Promise.resolve({
+          dataRoot: "C:\\Users\\User\\AppData\\Local\\LocalNote",
+          databasePath: "C:\\Users\\User\\AppData\\Local\\LocalNote\\Data\\localnote.db",
+          webviewDataPath: "C:\\Users\\User\\AppData\\Local\\LocalNote\\WebView\\main",
+          backupPath: "C:\\Users\\User\\Documents\\LocalNote Notes",
+        });
+      }
       if (command === "get_theme") return Promise.resolve("system");
       if (command === "set_theme") return Promise.resolve(args.preference);
       if (command === "get_accent_color") return Promise.resolve("#4c1d95");
@@ -299,10 +308,19 @@ describe("LocalNote page management", () => {
     expect(within(dialog).getByRole("heading", { name: "Settings" })).toBeVisible();
     expect(within(dialog).getByRole("heading", { name: "Appearance" })).toBeVisible();
     expect(within(dialog).getByRole("heading", { name: "Editor" })).toBeVisible();
+    expect(within(dialog).getByRole("heading", { name: "Storage" })).toBeVisible();
     expect(within(dialog).getByRole("heading", { name: "Backup" })).toBeVisible();
     expect(within(dialog).getByRole("heading", { name: "About" })).toBeVisible();
     expect(within(dialog).getByText("Version 1.0.2")).toBeVisible();
     expect(within(dialog).getByText(/stored only on this device/i)).toBeVisible();
+    expect(await within(dialog).findByText("C:\\Users\\User\\AppData\\Local\\LocalNote")).toBeVisible();
+
+    const liveDataCard = within(dialog).getByText("Live app data").closest("article")!;
+    fireEvent.click(within(liveDataCard).getByRole("button", { name: "Copy live app data path" }));
+    await waitFor(() => expect(clipboardWriteMock).toHaveBeenCalledWith(
+      "C:\\Users\\User\\AppData\\Local\\LocalNote",
+    ));
+    expect(await within(liveDataCard).findByText("Path copied.")).toBeVisible();
 
     fireEvent.click(within(dialog).getByRole("radio", { name: "Light" }));
     await waitFor(() => expect(document.documentElement.dataset.theme).toBe("light"));
@@ -1298,4 +1316,3 @@ describe("LocalNote page management", () => {
     expect(screen.getByRole("button", { name: "Focus mode" })).toBeVisible();
   });
 });
-
