@@ -11,7 +11,7 @@ const DATA_DIRECTORY: &str = "Data";
 const WEBVIEW_DIRECTORY: &str = "WebView";
 const MAIN_WEBVIEW_DIRECTORY: &str = "main";
 const DATABASE_FILENAME: &str = "localnote.db";
-const BACKUP_DIRECTORY: &str = "LocalNote Notes";
+const BACKUP_DIRECTORY: &str = "LocalNote Backups";
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -125,7 +125,7 @@ mod tests {
         );
         assert_eq!(
             paths.backup_path,
-            PathBuf::from(r"C:\Users\Ada\Documents\LocalNote Notes")
+            PathBuf::from(r"C:\Users\Ada\Documents\LocalNote Backups")
         );
     }
 

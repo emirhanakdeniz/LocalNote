@@ -279,7 +279,7 @@ mod tests {
     #[test]
     fn backups_notes_with_hierarchy_and_handles_collisions() {
         let directory = TempDir::new().unwrap();
-        let backup_dir = directory.path().join("LocalNote Notes");
+        let backup_dir = directory.path().join("LocalNote Backups");
 
         let notes = vec![
             BackupNoteItem {

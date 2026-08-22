@@ -61,7 +61,7 @@ describe("useNotesBackup", () => {
       }),
     );
     vi.mocked(exportApi.backupNotes).mockResolvedValue({
-      destinationPath: "C:\\Users\\Test\\Documents\\LocalNote Notes",
+      destinationPath: "C:\\Users\\Test\\Documents\\LocalNote Backups",
       exportedCount: 2,
       success: true,
     });
@@ -98,7 +98,7 @@ describe("useNotesBackup", () => {
 
     expect(result.current.status).toBe("success");
     expect(result.current.exportedCount).toBe(2);
-    expect(result.current.destinationPath).toBe("C:\\Users\\Test\\Documents\\LocalNote Notes");
+    expect(result.current.destinationPath).toBe("C:\\Users\\Test\\Documents\\LocalNote Backups");
     expect(result.current.error).toBeNull();
   });
 
@@ -106,7 +106,7 @@ describe("useNotesBackup", () => {
     const flushMock = vi.fn().mockResolvedValue(true);
     vi.mocked(pageApi.list).mockResolvedValue([]);
     vi.mocked(exportApi.backupNotes).mockResolvedValue({
-      destinationPath: "C:\\Users\\Test\\Documents\\LocalNote Notes",
+      destinationPath: "C:\\Users\\Test\\Documents\\LocalNote Backups",
       exportedCount: 0,
       success: true,
     });

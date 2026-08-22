@@ -254,12 +254,12 @@ The database contains notes and application settings. The WebView directory cont
 Markdown backups are deliberately kept separate at:
 
 ```text
-%USERPROFILE%\Documents\LocalNote Notes\
+%USERPROFILE%\Documents\LocalNote Backups\
 ```
 
 Open **Settings → Storage** to view, copy, or open either location. **Backup all notes** continues to write readable Markdown copies to the Documents folder, while individual Markdown exports go to the location selected in the save dialog.
 
-LocalNote does not migrate or modify data from the former `%APPDATA%\com.localnote.desktop` location. Existing Markdown backups in `Documents\LocalNote Notes` remain available and continue to be used.
+LocalNote does not migrate or modify data from the former `%APPDATA%\com.localnote.desktop` location. Existing Markdown backups in `Documents\LocalNote Notes` are left untouched; new backups are written to `Documents\LocalNote Backups`.
 
 ---
 

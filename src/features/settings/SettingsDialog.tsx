@@ -443,7 +443,7 @@ export function SettingsDialog({
         <section className="settings__section" aria-labelledby="settings-backup">
           <h2 id="settings-backup">Backup</h2>
           <p className="settings__field-description">
-            Export all your notes as Markdown files into the <code>Documents/LocalNote Notes</code> folder.
+            Export all your notes as Markdown files into the <code>Documents/LocalNote Backups</code> folder.
           </p>
 
           {backupStatus === "idle" && (

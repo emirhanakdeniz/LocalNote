@@ -216,7 +216,7 @@ function mockPageCommands(
       if (command === "backup_notes") {
         const notes = Array.isArray(args.notes) ? args.notes : [];
         return Promise.resolve({
-          destinationPath: "C:\\Users\\User\\Documents\\LocalNote Notes",
+          destinationPath: "C:\\Users\\User\\Documents\\LocalNote Backups",
           exportedCount: notes.length,
           success: true,
         });
@@ -230,7 +230,7 @@ function mockPageCommands(
           dataRoot: "C:\\Users\\User\\AppData\\Local\\LocalNote",
           databasePath: "C:\\Users\\User\\AppData\\Local\\LocalNote\\Data\\localnote.db",
           webviewDataPath: "C:\\Users\\User\\AppData\\Local\\LocalNote\\WebView\\main",
-          backupPath: "C:\\Users\\User\\Documents\\LocalNote Notes",
+          backupPath: "C:\\Users\\User\\Documents\\LocalNote Backups",
         });
       }
       if (command === "get_theme") return Promise.resolve("system");
