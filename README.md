@@ -52,7 +52,7 @@ It brings the familiar, flexible block-based editing experience of modern produc
 <table align="center">
   <tr>
     <td align="center" width="50%">
-      <strong>🌙 Dark Theme (Default)</strong><br />
+      <strong>🌙 Dark Theme</strong><br />
       <img src="docs/screenshots/localnote-dark.png" alt="LocalNote Dark Theme" />
     </td>
     <td align="center" width="50%">
@@ -68,10 +68,29 @@ It brings the familiar, flexible block-based editing experience of modern produc
 
 <br />
 
+<table align="center">
+  <tr>
+    <td align="center" width="50%">
+      <strong>⚙️ Appearance & Editor Settings</strong><br />
+      <img src="docs/screenshots/localnote-settings.png" alt="LocalNote Appearance and Editor Settings" />
+    </td>
+    <td align="center" width="50%">
+      <strong>💾 Storage & Backups</strong><br />
+      <img src="docs/screenshots/localnote-storage-backup.png" alt="LocalNote Storage, Backup, Import, and About Settings" />
+    </td>
+  </tr>
+</table>
+
 <p align="center">
-  <strong>⚙️ Appearance & Settings</strong><br />
-  <img src="docs/screenshots/localnote-settings.png" alt="LocalNote Settings & Preferences" width="520" /><br />
-  <em>Theme toggle, 6 curated accent color presets or custom HEX values, spellcheck setting, and 1-click Markdown backup.</em>
+  <em>Choose a theme and accent, manage spellcheck, inspect local storage, and back up or import Markdown notes.</em>
+</p>
+
+<br />
+
+<p align="center">
+  <strong>🗑️ Trash</strong><br />
+  <img src="docs/screenshots/localnote-trash.png" alt="LocalNote Trash Dialog" width="780" /><br />
+  <em>Review deleted notes in a focused dialog before restoring or permanently removing them.</em>
 </p>
 
 ---
