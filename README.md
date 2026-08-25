@@ -214,7 +214,7 @@ Ensure you have the following installed on your Windows machine:
 
 Download the latest release from the **[Releases](../../releases)** page:
 
-- **`LocalNote_1.1.0_x64-setup.exe`**: Standard Windows installer (NSIS)
+- **`LocalNote_1.1.1_x64-setup.exe`**: Standard Windows installer (NSIS)
 - **`localnote.exe`**: Portable standalone executable
 
 ### Development
@@ -246,7 +246,7 @@ npm run tauri build
 The compiled binaries will be output to:
 ```text
 src-tauri/target/release/localnote.exe
-src-tauri/target/release/bundle/nsis/LocalNote_1.1.0_x64-setup.exe
+src-tauri/target/release/bundle/nsis/LocalNote_1.1.1_x64-setup.exe
 ```
 
 ---

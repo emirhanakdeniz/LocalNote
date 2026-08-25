@@ -612,7 +612,7 @@ export function SettingsDialog({
             <img src="/app-icon.png" alt="" />
             <div>
               <strong>LocalNote</strong>
-              <span>Version 1.1.0</span>
+              <span>Version 1.1.1</span>
             </div>
           </div>
           <p>Fast, private notes stored only on this device. No account or cloud service.</p>
