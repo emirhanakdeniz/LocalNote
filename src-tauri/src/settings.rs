@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 const THEME_KEY: &str = "theme";
 const SPELLCHECK_KEY: &str = "spellcheck";
 const ACCENT_COLOR_KEY: &str = "accent_color";
+const WINDOW_STATE_KEY: &str = "window_state";
 pub(crate) const DEFAULT_ACCENT_COLOR: &str = "#4c1d95";
 
 pub(crate) fn validate_hex_color(value: &str) -> Result<String, DatabaseError> {
@@ -179,6 +180,52 @@ pub(crate) fn set_accent_color(
     Ok(normalized)
 }
 
+#[derive(Clone, Copy, Debug, Deserialize, PartialEq, Eq, Serialize)]
+pub(crate) struct SavedWindowState {
+    pub(crate) x: i32,
+    pub(crate) y: i32,
+    pub(crate) width: u32,
+    pub(crate) height: u32,
+    pub(crate) is_maximized: bool,
+}
+
+pub(crate) fn get_window_state(
+    state: &DatabaseState,
+) -> Result<Option<SavedWindowState>, DatabaseError> {
+    let connection = database::connection(state)?;
+    let stored = connection
+        .query_row(
+            "SELECT value FROM settings WHERE key = ?1",
+            [WINDOW_STATE_KEY],
+            |row| row.get::<_, String>(0),
+        )
+        .optional()?;
+
+    stored
+        .map(|raw| {
+            serde_json::from_str::<SavedWindowState>(&raw).map_err(|error| {
+                DatabaseError::context("Could not deserialize saved window state", error)
+            })
+        })
+        .transpose()
+}
+
+pub(crate) fn set_window_state(
+    state: &DatabaseState,
+    window_state: SavedWindowState,
+) -> Result<SavedWindowState, DatabaseError> {
+    let serialized = serde_json::to_string(&window_state).map_err(|error| {
+        DatabaseError::context("Could not serialize window state", error)
+    })?;
+    let connection = database::connection(state)?;
+    connection.execute(
+        "INSERT INTO settings (key, value) VALUES (?1, ?2)
+         ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+        params![WINDOW_STATE_KEY, &serialized],
+    )?;
+    Ok(window_state)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -286,5 +333,60 @@ mod tests {
             .unwrap();
 
         assert!(get_accent_color(&state).is_err());
+    }
+
+    #[test]
+    fn window_state_defaults_to_none_and_persists_valid_state() {
+        let directory = TempDir::new().unwrap();
+        let state = database::initialize(&directory.path().join("localnote.db")).unwrap();
+
+        assert_eq!(get_window_state(&state).unwrap(), None);
+
+        let initial_state = SavedWindowState {
+            x: 150,
+            y: 200,
+            width: 1280,
+            height: 800,
+            is_maximized: false,
+        };
+
+        assert_eq!(
+            set_window_state(&state, initial_state).unwrap(),
+            initial_state
+        );
+        let reopened = database::initialize(&directory.path().join("localnote.db")).unwrap();
+        assert_eq!(get_window_state(&reopened).unwrap(), Some(initial_state));
+
+        let maximized_state = SavedWindowState {
+            x: 150,
+            y: 200,
+            width: 1280,
+            height: 800,
+            is_maximized: true,
+        };
+        assert_eq!(
+            set_window_state(&state, maximized_state).unwrap(),
+            maximized_state
+        );
+        let reopened_max = database::initialize(&directory.path().join("localnote.db")).unwrap();
+        assert_eq!(
+            get_window_state(&reopened_max).unwrap(),
+            Some(maximized_state)
+        );
+    }
+
+    #[test]
+    fn invalid_stored_window_state_is_reported_as_error() {
+        let directory = TempDir::new().unwrap();
+        let state = database::initialize(&directory.path().join("localnote.db")).unwrap();
+        let connection = database::connection(&state).unwrap();
+        connection
+            .execute(
+                "INSERT INTO settings (key, value) VALUES (?1, ?2)",
+                params![WINDOW_STATE_KEY, "{corrupted_json"],
+            )
+            .unwrap();
+
+        assert!(get_window_state(&state).is_err());
     }
 }

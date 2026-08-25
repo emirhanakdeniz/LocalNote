@@ -11,6 +11,7 @@ use database::{DatabaseState, DatabaseStatus};
 use documents::Document;
 use pages::Page;
 use search::SearchResult;
+use std::sync::{Arc, Mutex};
 use tauri::Manager;
 
 #[tauri::command]
@@ -206,6 +207,149 @@ fn empty_trash(state: tauri::State<'_, DatabaseState>) -> Result<(), String> {
     pages::empty_trash(&state).map_err(|error| error.to_string())
 }
 
+fn restore_saved_window_state(
+    window: &tauri::WebviewWindow,
+    saved: &settings::SavedWindowState,
+) {
+    let monitors = window.available_monitors().unwrap_or_default();
+
+    let target_monitor = monitors
+        .iter()
+        .find(|mon| {
+            let pos = mon.position();
+            let size = mon.size();
+            let mon_left = pos.x;
+            let mon_top = pos.y;
+            let mon_right = mon_left + size.width as i32;
+            let mon_bottom = mon_top + size.height as i32;
+
+            let win_left = saved.x;
+            let win_top = saved.y;
+            let win_right = saved.x + saved.width as i32;
+            let win_bottom = saved.y + saved.height as i32;
+
+            win_left < mon_right && win_right > mon_left && win_top < mon_bottom && win_bottom > mon_top
+        })
+        .or_else(|| monitors.first());
+
+    let (x, y, width, height) = if let Some(mon) = target_monitor {
+        let mon_pos = mon.position();
+        let mon_size = mon.size();
+        let mon_left = mon_pos.x;
+        let mon_top = mon_pos.y;
+        let mon_right = mon_left + mon_size.width as i32;
+        let mon_bottom = mon_top + mon_size.height as i32;
+
+        let max_w = mon_size.width.max(640);
+        let max_h = mon_size.height.max(480);
+        let w = saved.width.clamp(640, max_w);
+        let h = saved.height.clamp(480, max_h);
+
+        let clamped_x = saved.x.clamp(mon_left, (mon_right - w as i32).max(mon_left));
+        let clamped_y = saved.y.clamp(mon_top, (mon_bottom - h as i32).max(mon_top));
+
+        (clamped_x, clamped_y, w, h)
+    } else {
+        (
+            saved.x,
+            saved.y,
+            saved.width.max(640),
+            saved.height.max(480),
+        )
+    };
+
+    let _ = window.set_size(tauri::Size::Physical(tauri::PhysicalSize::new(width, height)));
+    let _ = window.set_position(tauri::Position::Physical(tauri::PhysicalPosition::new(x, y)));
+
+    if saved.is_maximized {
+        let _ = window.maximize();
+    }
+}
+
+fn track_window_state(
+    window: &tauri::WebviewWindow,
+    app_handle: tauri::AppHandle,
+    saved_state: Option<settings::SavedWindowState>,
+) {
+    let initial_state = saved_state.unwrap_or_else(|| {
+        let pos = window.outer_position().unwrap_or(tauri::PhysicalPosition::new(0, 0));
+        let size = window.inner_size().unwrap_or(tauri::PhysicalSize::new(1100, 760));
+        let is_maximized = window.is_maximized().unwrap_or(false);
+        settings::SavedWindowState {
+            x: pos.x,
+            y: pos.y,
+            width: size.width.max(640),
+            height: size.height.max(480),
+            is_maximized,
+        }
+    });
+
+    let current_state = Arc::new(Mutex::new(initial_state));
+    let current_state_clone = current_state.clone();
+    let window_clone = window.clone();
+
+    window.on_window_event(move |event| match event {
+        tauri::WindowEvent::Moved(pos) => {
+            if let Ok(is_max) = window_clone.is_maximized() {
+                if !is_max {
+                    if let Ok(mut state) = current_state_clone.lock() {
+                        state.x = pos.x;
+                        state.y = pos.y;
+                        state.is_maximized = false;
+                        if let Some(db) = app_handle.try_state::<DatabaseState>() {
+                            let _ = settings::set_window_state(&db, *state);
+                        }
+                    }
+                }
+            }
+        }
+        tauri::WindowEvent::Resized(size) => {
+            if let Ok(is_max) = window_clone.is_maximized() {
+                if !is_max && size.width > 0 && size.height > 0 {
+                    if let Ok(mut state) = current_state_clone.lock() {
+                        state.width = size.width;
+                        state.height = size.height;
+                        state.is_maximized = false;
+                        if let Some(db) = app_handle.try_state::<DatabaseState>() {
+                            let _ = settings::set_window_state(&db, *state);
+                        }
+                    }
+                } else if is_max {
+                    if let Ok(mut state) = current_state_clone.lock() {
+                        state.is_maximized = true;
+                        if let Some(db) = app_handle.try_state::<DatabaseState>() {
+                            let _ = settings::set_window_state(&db, *state);
+                        }
+                    }
+                }
+            }
+        }
+        tauri::WindowEvent::CloseRequested { .. } | tauri::WindowEvent::Destroyed => {
+            if let Ok(is_max) = window_clone.is_maximized() {
+                if let Ok(mut state) = current_state_clone.lock() {
+                    state.is_maximized = is_max;
+                    if !is_max {
+                        if let Ok(pos) = window_clone.outer_position() {
+                            state.x = pos.x;
+                            state.y = pos.y;
+                        }
+                        if let Ok(size) = window_clone.inner_size() {
+                            if size.width > 0 && size.height > 0 {
+                                state.width = size.width;
+                                state.height = size.height;
+                            }
+                        }
+                    }
+                    if let Some(db) = app_handle.try_state::<DatabaseState>() {
+                        let _ = settings::set_window_state(&db, *state);
+                    }
+                }
+            }
+        }
+        _ => {}
+    });
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -214,7 +358,8 @@ pub fn run() {
             let storage_paths = storage::resolve(app.handle())?;
             storage_paths.prepare_live_directories()?;
             let database_state = database::initialize(&storage_paths.database_path)?;
-            app.manage(database_state);
+
+            let saved_state = settings::get_window_state(&database_state).ok().flatten();
 
             let window_config = app
                 .config()
@@ -224,9 +369,17 @@ pub fn run() {
                 .find(|config| config.label == "main")
                 .cloned()
                 .ok_or("The main window configuration is missing")?;
+
             let window = tauri::WebviewWindowBuilder::from_config(app, &window_config)?
                 .data_directory(storage_paths.webview_data_path.clone())
                 .build()?;
+
+            if let Some(ref saved) = saved_state {
+                restore_saved_window_state(&window, saved);
+            }
+
+            track_window_state(&window, app.handle().clone(), saved_state);
+            app.manage(database_state);
             app.manage(storage_paths);
 
             #[cfg(windows)]
@@ -237,6 +390,9 @@ pub fn run() {
                     }
                 }
             })?;
+
+            window.show()?;
+            let _ = window.set_focus();
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
