@@ -52,8 +52,11 @@
   --color-scrollbar-hover: #aaa095;
   --color-surface-hover: #e7e0d7;
   --color-surface-pressed: #dcd3c7;
-  --color-code-background: #f0ece6;
-  --color-code-border: #d8cfc4;
+  --color-code-logo-field: #f0f3f5;
+  --color-code-header: #edf0f4;
+  --color-code-focus: #587696;
+  --color-code-background: #f6f8fa;
+  --color-code-border: #d8dee6;
   --color-inline-code: #eee8e0;
   --color-accent-ink: var(--color-accent-ink-light, #315fc4);
   --color-success: #28704a;
@@ -61,17 +64,17 @@
   --color-danger: #b53232;
   --color-danger-text: #ffffff;
   --color-danger-surface: #f9e7e4;
-  --code-foreground: #2a241e;
-  --code-background: #f0ece6;
-  --code-token-comment: #72675c;
-  --code-token-string: #26704b;
-  --code-token-constant: #176a7c;
-  --code-token-keyword: #73529c;
-  --code-token-parameter: #535e70;
-  --code-token-function: #2865a5;
-  --code-token-string-expression: #277367;
-  --code-token-punctuation: #6b6259;
-  --code-token-link: #2865a5;
+  --code-foreground: #24292f;
+  --code-background: #f6f8fa;
+  --code-token-comment: #57606a;
+  --code-token-string: #0a3069;
+  --code-token-constant: #0550ae;
+  --code-token-keyword: #cf222e;
+  --code-token-parameter: #953800;
+  --code-token-function: #8250df;
+  --code-token-string-expression: #116329;
+  --code-token-punctuation: #57606a;
+  --code-token-link: #0969da;
 }
 
 /* Final LocalNote token palettes: explicit and system themes share one source. */
@@ -95,8 +98,10 @@
   --shadow-dialog: 0 16px 40px rgba(0, 0, 0, 0.5), 0 3px 10px rgba(0, 0, 0, 0.35);
   --color-surface-hover: #302e2d;
   --color-surface-pressed: #3d3834;
-  --color-code-background: #202022;
-  --color-code-border: #3b3837;
+  --color-code-header: #20242c;
+  --color-code-focus: #6488b2;
+  --color-code-background: #17191e;
+  --color-code-border: #303641;
   --color-inline-code: #302e2d;
   --color-accent-ink: var(--color-accent-ink-dark, #91b2ff);
   --color-success: #8bc4a0;
@@ -104,17 +109,17 @@
   --color-danger: #f1948b;
   --color-danger-text: #2a241e;
   --color-danger-surface: #422826;
-  --code-foreground: #e8ded3;
-  --code-background: #202022;
-  --code-token-comment: #a99d90;
-  --code-token-string: #9cc5a4;
-  --code-token-constant: #8ec6ce;
-  --code-token-keyword: #bfa3d8;
-  --code-token-parameter: #b4bfce;
-  --code-token-function: #a0bcdf;
-  --code-token-string-expression: #a0c8bc;
-  --code-token-punctuation: #b4a89b;
-  --code-token-link: #a0bcdf;
+  --code-foreground: #d4d4d4;
+  --code-background: #17191e;
+  --code-token-comment: #7ca86d;
+  --code-token-string: #ce9178;
+  --code-token-constant: #9cdcfe;
+  --code-token-keyword: #c586c0;
+  --code-token-parameter: #d4d4d4;
+  --code-token-function: #dcdcaa;
+  --code-token-string-expression: #b5cea8;
+  --code-token-punctuation: #aeb8c7;
+  --code-token-link: #75beff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -138,8 +143,10 @@
     --shadow-dialog: 0 16px 40px rgba(0, 0, 0, 0.5), 0 3px 10px rgba(0, 0, 0, 0.35);
     --color-surface-hover: #302e2d;
     --color-surface-pressed: #3d3834;
-    --color-code-background: #202022;
-    --color-code-border: #3b3837;
+    --color-code-header: #20242c;
+    --color-code-focus: #6488b2;
+    --color-code-background: #17191e;
+    --color-code-border: #303641;
     --color-inline-code: #302e2d;
     --color-accent-ink: var(--color-accent-ink-dark, #91b2ff);
     --color-success: #8bc4a0;
@@ -147,17 +154,17 @@
     --color-danger: #f1948b;
     --color-danger-text: #2a241e;
     --color-danger-surface: #422826;
-    --code-foreground: #e8ded3;
-    --code-background: #202022;
-    --code-token-comment: #a99d90;
-    --code-token-string: #9cc5a4;
-    --code-token-constant: #8ec6ce;
-    --code-token-keyword: #bfa3d8;
-    --code-token-parameter: #b4bfce;
-    --code-token-function: #a0bcdf;
-    --code-token-string-expression: #a0c8bc;
-    --code-token-punctuation: #b4a89b;
-    --code-token-link: #a0bcdf;
+    --code-foreground: #d4d4d4;
+    --code-background: #17191e;
+    --code-token-comment: #7ca86d;
+    --code-token-string: #ce9178;
+    --code-token-constant: #9cdcfe;
+    --code-token-keyword: #c586c0;
+    --code-token-parameter: #d4d4d4;
+    --code-token-function: #dcdcaa;
+    --code-token-string-expression: #b5cea8;
+    --code-token-punctuation: #aeb8c7;
+    --code-token-link: #75beff;
   }
 }
 

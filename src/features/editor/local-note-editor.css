@@ -205,13 +205,20 @@
 
 /* Code Block */
 .localnote-editor .bn-block-content[data-content-type="codeBlock"] {
+  --code-toolbar-height: 2.75rem;
   position: relative;
   max-width: 100%;
   overflow: hidden;
-  border: 1px solid var(--color-code-border);
-  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-layer-edge);
+  border-radius: var(--radius-panel);
   color: var(--code-foreground);
   background: var(--color-code-background);
+  box-shadow: var(--shadow-panel);
+  transition: border-color var(--transition-fast);
+}
+
+.localnote-editor .bn-block-content[data-content-type="codeBlock"]:focus-within {
+  border-color: var(--color-code-focus);
 }
 
 .localnote-editor .bn-block-outer:has(> .bn-block > .bn-block-content[data-content-type="codeBlock"]) {
@@ -227,15 +234,17 @@
   min-width: 0;
   max-width: 100%;
   overflow-x: auto;
-  padding: 2.85rem 1.15rem 1.15rem;
+  margin: 0;
+  padding: calc(var(--code-toolbar-height) + 1rem) 1.25rem 1.25rem;
   color: var(--code-foreground);
   background: var(--color-code-background);
-  font-family: "Cascadia Code", "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
-  font-size: 0.84rem;
-  line-height: 1.62;
-  letter-spacing: -0.005em;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  letter-spacing: 0;
+  tab-size: 2;
   scrollbar-width: thin;
-  scrollbar-color: var(--color-code-border) transparent;
+  scrollbar-color: var(--color-scrollbar) transparent;
 }
 
 .localnote-editor .bn-block-content[data-content-type="codeBlock"] > pre > code {
@@ -252,9 +261,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.42rem 0.65rem;
+  height: var(--code-toolbar-height);
+  gap: 0.75rem;
+  padding: 0.375rem 0.75rem;
   border-bottom: 1px solid var(--color-code-border);
-  background: var(--color-code-background);
+  background: var(--color-code-header);
   font-family: var(--bn-font-family);
   pointer-events: none;
 }
@@ -264,18 +275,24 @@
   pointer-events: auto;
 }
 
+.code-language-picker { min-width: 0; }
+.code-block-toolbar__actions { flex-shrink: 0; }
+
 .code-language-picker__trigger {
   display: flex;
-  min-height: 1.65rem;
-  gap: 0.35rem;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 2rem;
+  gap: 0.5rem;
   align-items: center;
   padding: 0.18rem 0.42rem;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   background: transparent;
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: 0.8125rem;
+  font-weight: 550;
   transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
 }
 
@@ -286,20 +303,36 @@
   background: var(--color-raised);
 }
 
-.code-language-picker__mark {
-  display: inline-grid;
-  min-width: 1.25rem;
-  height: 1.15rem;
-  place-items: center;
-  padding-inline: 0.18rem;
-  border: 1px solid var(--color-code-border);
-  border-radius: 0.25rem;
+.code-language-icon {
+  display: block;
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  object-fit: contain;
+}
+
+.code-language-icon--symbol { color: var(--color-text-secondary); }
+.code-language-icon--shellscript {
+  padding: 1px;
+  border-radius: 3px;
+  background: var(--color-code-logo-field);
+}
+
+.code-language-picker__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.code-language-picker__trigger .code-language-picker__chevron {
+  width: 0.75rem;
+  height: 0.75rem;
   color: var(--color-text-subtle);
-  background: color-mix(in srgb, var(--color-code-background) 50%, var(--color-editor));
-  font-family: "Cascadia Code", Consolas, monospace;
-  font-size: 0.52rem;
-  font-weight: 700;
-  line-height: 1;
+}
+
+.code-language-picker__trigger[aria-expanded="true"] .code-language-picker__chevron {
+  transform: rotate(180deg);
 }
 
 .code-language-picker__popover {
@@ -316,14 +349,14 @@
 
 .code-language-picker__popover input {
   width: 100%;
-  padding: 0.5rem 0.65rem;
+  padding: 0.75rem;
   border: 0;
   border-bottom: 1px solid var(--color-separator);
   outline: 0;
   color: var(--color-text);
   background: transparent;
   font: inherit;
-  font-size: 0.76rem;
+  font-size: 0.8125rem;
 }
 
 .code-language-picker__popover input:focus-visible {
@@ -344,13 +377,13 @@
 .code-language-picker__list button {
   display: flex;
   width: 100%;
-  min-height: 1.85rem;
+  min-height: 2.25rem;
   align-items: center;
   justify-content: space-between;
   padding: 0.3rem 0.45rem;
   border-radius: var(--radius-sm);
   color: var(--color-text);
-  font-size: 0.74rem;
+  font-size: 0.8125rem;
   text-align: left;
   transition: background var(--transition-fast);
 }
@@ -387,16 +420,16 @@
 
 .code-block-toolbar__copy {
   display: inline-flex;
-  min-height: 1.65rem;
+  min-height: 2rem;
   gap: 0.35rem;
   align-items: center;
   padding: 0.18rem 0.45rem;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
-  color: var(--color-text-subtle);
+  color: var(--color-text-secondary);
   background: transparent;
   cursor: pointer;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
 }
 
@@ -405,15 +438,6 @@
   border-color: var(--color-code-border);
   color: var(--color-text);
   background: var(--color-raised);
-}
-
-.code-block-toolbar__copy--idle span {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
 }
 
 .code-block-toolbar__copy--copied {

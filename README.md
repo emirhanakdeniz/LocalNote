@@ -36,7 +36,7 @@ It brings the familiar, flexible block-based editing experience of modern produc
 
 - ⚡ **Fast & Lightweight**: Powered by **Tauri v2** and **Rust** for minimal resource consumption, with all data stored in an embedded SQLite database running in WAL mode.
 - 📝 **Block-Based Writing**: Rich block types — paragraphs, headings, bullet/numbered lists, checklists, blockquotes, and dividers — with **slash commands** (`/`), markdown shortcuts (`#`, `-`, `1.`, `>`, …), and drag handles for reordering and transformations.
-- 🎨 **Code Syntax Highlighting**: Integrated **Shiki 4.4** engine with meticulously balanced soft-contrast palettes, supporting TypeScript, JavaScript, Python, Rust, HTML, CSS, SQL, Shell, JSON, and more without network calls.
+- 🎨 **Code Blocks**: IDE-inspired light/dark syntax palettes, local language logos, a searchable keyboard-friendly language selector, and one-click copy. Integrated **Shiki 4.4** highlighting supports Java, TypeScript, JavaScript, Python, HTML, CSS, SQL, Bash/Shell, PowerShell, and JSON without network calls.
 - 🔍 **Instant Local Search**: **SQLite FTS5** full-text search across page titles and complete note contents with highlighted matches, clear result states, and keyboard-first navigation.
 - 🗂️ **Hierarchy, Organization & Trash**: Deep multi-level nested pages with cycle prevention, favorites, and two-stage delete protection with a dedicated **Trash** surface for restore or permanent purge.
 - 🎨 **Matte Windows Workbench**: A readable three-pane layout with separate rounded panel islands, a flat notebook icon, paper-toned light surfaces, charcoal/graphite dark surfaces, hierarchy breadcrumbs, local save status, and a compact navigation overlay at smaller window sizes.

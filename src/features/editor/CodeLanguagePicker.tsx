@@ -10,26 +10,13 @@ import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "../../components/Icon";
 import { codeLanguages } from "./codeBlock";
+import { CodeLanguageIcon } from "./CodeLanguageIcon";
 
 const languageEntries = Object.entries(codeLanguages).map(([id, language]) => ({
   id,
   name: language.name,
   aliases: language.aliases ?? [],
 }));
-
-const languageMarks: Record<string, string> = {
-  text: "TXT",
-  java: "J",
-  javascript: "JS",
-  typescript: "TS",
-  json: "{}",
-  sql: "SQL",
-  shellscript: "$_",
-  powershell: "PS",
-  python: "PY",
-  html: "<>",
-  css: "#",
-};
 
 type PickerPosition = {
   top: number;
@@ -247,9 +234,7 @@ export function CodeLanguageControl({ select }: CodeLanguageControlProps) {
             onClick={() => choose(language.id)}
           >
             <span className="code-language-picker__option-label">
-              <span className="code-language-picker__mark" aria-hidden="true">
-                {languageMarks[language.id] ?? "·"}
-              </span>
+              <CodeLanguageIcon language={language.id} />
               <span>{language.name}</span>
             </span>
             {language.id === activeLanguage && <Icon name="check" />}
@@ -260,7 +245,7 @@ export function CodeLanguageControl({ select }: CodeLanguageControlProps) {
   ) : null;
 
   return (
-    <div className="code-block-toolbar">
+    <div className="code-block-toolbar" role="group" aria-label="Code block controls">
       <div ref={pickerRef} className="code-language-picker" onKeyDown={handleKeyboard}>
         <button
           ref={triggerRef}
@@ -271,10 +256,9 @@ export function CodeLanguageControl({ select }: CodeLanguageControlProps) {
           aria-expanded={open}
           onClick={() => open ? close(false) : setOpen(true)}
         >
-          <span className="code-language-picker__mark" aria-hidden="true">
-            {languageMarks[activeLanguage] ?? "·"}
-          </span>
-          <span>{activeName}</span>
+          <CodeLanguageIcon language={activeLanguage} />
+          <span className="code-language-picker__name">{activeName}</span>
+          <Icon name="chevron" className="code-language-picker__chevron" />
         </button>
         {popover && createPortal(popover, document.body)}
       </div>
@@ -283,10 +267,11 @@ export function CodeLanguageControl({ select }: CodeLanguageControlProps) {
           type="button"
           className={`code-block-toolbar__copy code-block-toolbar__copy--${copyState}`}
           aria-label={copyState === "copied" ? "Copied" : "Copy code"}
+          title={copyState === "error" ? "Copy failed. Try again." : "Copy code to clipboard"}
           onClick={() => void copyCode()}
         >
           <Icon name={copyState === "copied" ? "check" : "copy"} />
-          <span>{copyState === "copied" ? "Copied" : copyState === "error" ? "Copy failed" : "Copy"}</span>
+          <span aria-live="polite">{copyState === "copied" ? "Copied" : copyState === "error" ? "Copy failed" : "Copy"}</span>
         </button>
       </div>
     </div>

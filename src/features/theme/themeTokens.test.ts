@@ -18,6 +18,16 @@ const FINAL_TOKEN_NAMES = [
   "--shadow-panel",
   "--shadow-menu",
   "--shadow-dialog",
+  "--color-code-header",
+  "--color-code-background",
+  "--color-code-border",
+  "--color-code-focus",
+  "--code-foreground",
+  "--code-token-comment",
+  "--code-token-string",
+  "--code-token-constant",
+  "--code-token-keyword",
+  "--code-token-function",
 ] as const;
 
 function tokens(block: string) {

@@ -484,6 +484,8 @@ describe("LocalNote page management", () => {
       .toBe(document.body);
     fireEvent.change(search, { target: { value: "type" } });
     expect(screen.getByRole("option", { name: "TypeScript" })).toBeVisible();
+    expect(screen.getByRole("option", { name: "TypeScript" }).querySelector("img"))
+      .toHaveAttribute("src", "/code-languages/typescript.svg");
     expect(screen.queryByRole("option", { name: "Python" })).not.toBeInTheDocument();
     const nativeSelect = document.querySelector<HTMLSelectElement>(
       'select[aria-label="Native code language"]',
@@ -496,6 +498,8 @@ describe("LocalNote page management", () => {
     fireEvent.keyDown(search, { key: "Enter" });
 
     const updatedTrigger = screen.getByRole("button", { name: "Code language: TypeScript" });
+    expect(updatedTrigger.querySelector("img")).toHaveAttribute("alt", "");
+    expect(updatedTrigger.querySelector("img")).toHaveAttribute("src", "/code-languages/typescript.svg");
     await waitFor(() => expect(updatedTrigger).toHaveFocus());
     expect(document.querySelector('select[aria-label="Native code language"]'))
       .toHaveValue("typescript");
