@@ -208,6 +208,7 @@ export function EditorHeader({
               type="button"
               className={`editor-action-btn ${isFavorite ? "editor-action-btn--favorite-active" : ""}`}
               aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+              aria-pressed={isFavorite}
               onClick={() => onSetFavorite(!isFavorite)}
             >
               <Icon name="star" />
@@ -221,6 +222,7 @@ export function EditorHeader({
                 type="button"
                 className={`editor-action-btn ${isTocVisible ? "editor-action-btn--active" : ""}`}
                 aria-label={isTocVisible ? "Hide table of contents" : "Show table of contents"}
+                aria-pressed={isTocVisible}
                 onClick={onToggleToc}
               >
                 <Icon name="list" />
@@ -235,6 +237,7 @@ export function EditorHeader({
                 type="button"
                 className={`editor-action-btn ${isFocusMode ? "editor-action-btn--active" : ""}`}
                 aria-label={isFocusMode ? "Exit focus mode" : "Focus mode"}
+                aria-pressed={isFocusMode}
                 onClick={onToggleFocusMode}
               >
                 <Icon name="focus" />

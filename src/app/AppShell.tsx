@@ -279,6 +279,7 @@ export function AppShell() {
       ) : (
         <main className="empty-document" aria-label="No page selected">
           <div>
+            <img className="empty-document__icon" src="/app-icon.svg" width="80" height="80" alt="" />
             <h1>No pages yet</h1>
             <p>Create a page to start organizing your notes.</p>
             <button type="button" onClick={() => void createPage()}>

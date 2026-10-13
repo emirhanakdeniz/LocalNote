@@ -61,6 +61,7 @@ export function Sidebar({
     return (
       <aside className="sidebar sidebar--collapsed" aria-label="Workspace navigation">
         <div className="sidebar__scroll-area sidebar__scroll-area--collapsed">
+          <img className="sidebar__product-icon" src="/app-icon.svg" width="32" height="32" alt="LocalNote" />
           <button
             type="button"
             className="sidebar__icon-button"
@@ -116,6 +117,10 @@ export function Sidebar({
   return (
     <aside className="sidebar" aria-label="Workspace navigation">
       <div className="sidebar__scroll-area">
+        <div className="sidebar__product">
+          <img src="/app-icon.svg" width="32" height="32" alt="" />
+          <span>LocalNote</span>
+        </div>
         {/* Top header row: New Note Button + Collapse Toggle */}
         <div className="sidebar__header-row">
           <NewNoteButton onClick={() => void createPage()} />

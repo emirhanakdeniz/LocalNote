@@ -609,10 +609,11 @@ export function SettingsDialog({
         <section className="settings__section settings__about" aria-labelledby="settings-about">
           <h2 id="settings-about">About</h2>
           <div className="settings__about-product">
-            <img src="/app-icon.png" alt="" />
+            <img src="/app-icon.svg" width="48" height="48" alt="" />
             <div>
               <strong>LocalNote</strong>
               <span>Version 1.1.1</span>
+              <span className="settings__maker-credit">by ea.</span>
             </div>
           </div>
           <p>Fast, private notes stored only on this device. No account or cloud service.</p>

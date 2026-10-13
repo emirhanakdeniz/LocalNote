@@ -61,7 +61,7 @@
 }
 
 .localnote-editor .bn-inline-content {
-  caret-color: var(--color-accent);
+  caret-color: var(--color-accent-ink);
 }
 
 .localnote-editor .bn-block-content[data-content-type="paragraph"] {
@@ -149,7 +149,7 @@
   padding: 0.2rem 0 0.2rem 0.95rem;
   border-left: 2.5px solid var(--color-accent);
   color: var(--color-text-secondary);
-  font-style: italic;
+  font-style: normal;
 }
 
 /* Divider */
@@ -164,7 +164,7 @@
 .localnote-editor code:not(pre code) {
   padding: 0.12em 0.35em;
   border-radius: var(--radius-sm);
-  color: var(--color-accent);
+  color: var(--color-accent-ink);
   background: var(--color-inline-code);
   font-family: "Cascadia Code", "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
   font-size: 0.88em;
@@ -172,7 +172,7 @@
 
 /* Links */
 .localnote-editor a {
-  color: var(--color-accent);
+  color: var(--color-accent-ink);
   text-underline-offset: 0.16em;
   text-decoration: underline;
 }
@@ -186,7 +186,7 @@
   width: 0.95rem;
   height: 1.45rem;
   margin-right: 0.55rem;
-  accent-color: var(--color-accent);
+  accent-color: var(--color-accent-ink);
   cursor: pointer;
 }
 
@@ -254,7 +254,7 @@
   justify-content: space-between;
   padding: 0.42rem 0.65rem;
   border-bottom: 1px solid var(--color-code-border);
-  background: color-mix(in srgb, var(--color-code-background) 90%, transparent);
+  background: var(--color-code-background);
   font-family: var(--bn-font-family);
   pointer-events: none;
 }
@@ -362,7 +362,7 @@
 
 .code-language-picker__list button[aria-selected="true"] {
   font-weight: 600;
-  color: var(--color-accent);
+  color: var(--color-accent-ink);
 }
 
 .code-language-picker__option-label {
@@ -555,7 +555,7 @@
   border: 1px solid var(--color-border);
   border-radius: 0.25rem;
   color: var(--color-text-subtle);
-  background: color-mix(in srgb, var(--color-editor) 65%, transparent);
+  background: var(--color-editor);
   font-family: "Cascadia Code", Consolas, monospace;
   font-size: 0.58rem;
   font-weight: 700;

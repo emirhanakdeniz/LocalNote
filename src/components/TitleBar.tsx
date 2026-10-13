@@ -8,7 +8,7 @@ export function TitleBar() {
         data-tauri-drag-region
         onDoubleClick={() => void getCurrentWindow().toggleMaximize()}
       >
-        <img className="titlebar__mark" src="/app-icon.png" alt="" />
+        <img className="titlebar__mark" src="/app-icon.svg" alt="" />
         <span className="titlebar__title">LocalNote</span>
       </div>
       <div className="titlebar__controls">

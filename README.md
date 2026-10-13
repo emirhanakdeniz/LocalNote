@@ -1,7 +1,8 @@
 # LocalNote
 
 <p align="center">
-  <strong>A fast, private, and local-only desktop block-based note-taking application.</strong>
+  <strong>A fast, private, and local-only desktop block-based note-taking application.</strong><br />
+  <sub>by ea.</sub>
 </p>
 
 <p align="center">
@@ -38,8 +39,8 @@ It brings the familiar, flexible block-based editing experience of modern produc
 - 🎨 **Code Syntax Highlighting**: Integrated **Shiki 4.4** engine with meticulously balanced soft-contrast palettes, supporting TypeScript, JavaScript, Python, Rust, HTML, CSS, SQL, Shell, JSON, and more without network calls.
 - 🔍 **Instant Local Search**: **SQLite FTS5** full-text search across page titles and complete note contents with highlighted matches, clear result states, and keyboard-first navigation.
 - 🗂️ **Hierarchy, Organization & Trash**: Deep multi-level nested pages with cycle prevention, favorites, and two-stage delete protection with a dedicated **Trash** surface for restore or permanent purge.
-- 🎨 **Quiet Windows Workbench**: A readable three-pane layout with hierarchy breadcrumbs, a local save-status rail, a focused contents navigator, and a compact navigation overlay at smaller window sizes.
-- 🎨 **Themes & Accent Palettes**: Frost light, Night dark, and System themes, Local Blue as the default for new installations, existing curated accents, and custom HEX color input.
+- 🎨 **Matte Windows Workbench**: A readable three-pane layout with a flat notebook icon, paper-toned light surfaces, charcoal/graphite dark surfaces, hierarchy breadcrumbs, local save status, and a compact navigation overlay at smaller window sizes.
+- 🎨 **Themes & Accent Palettes**: Light, Dark, and System themes, Local Blue as the default for new installations, curated accents, and custom HEX colors with contrast-adjusted labels and focus indicators.
 - 🛡️ **Ironclad Data Safety**: Debounced autosave with a serialized write queue, flush-before-load page switching, window close protection, and non-destructive recovery that never silently wipes malformed documents.
 - 📤 **Markdown Export**: Export any note to standard `.md` format with sanitized, OS-safe file naming.
 - 💾 **Transparent Local Storage**: Inspect, copy, or open the live data and Markdown backup locations directly from Settings.
@@ -47,7 +48,9 @@ It brings the familiar, flexible block-based editing experience of modern produc
 
 ---
 
-## Screenshots
+## Screenshots (previous appearance)
+
+These screenshots predate the matte workbench update. See the [current visual system and icon generation instructions](docs/design-system.md) for the updated palette, typography, and artwork.
 
 <table align="center">
   <tr>

@@ -6,7 +6,7 @@ const THEME_KEY: &str = "theme";
 const SPELLCHECK_KEY: &str = "spellcheck";
 const ACCENT_COLOR_KEY: &str = "accent_color";
 const WINDOW_STATE_KEY: &str = "window_state";
-pub(crate) const DEFAULT_ACCENT_COLOR: &str = "#4c1d95";
+pub(crate) const DEFAULT_ACCENT_COLOR: &str = "#3b6fe5";
 
 pub(crate) fn validate_hex_color(value: &str) -> Result<String, DatabaseError> {
     let trimmed = value.trim();
