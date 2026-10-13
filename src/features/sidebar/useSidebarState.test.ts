@@ -1,4 +1,5 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, fireEvent, render, renderHook } from "@testing-library/react";
+import { createElement } from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   DEFAULT_SIDEBAR_WIDTH,
@@ -82,6 +83,33 @@ describe("useSidebarState", () => {
       result.current.handleResizerDoubleClick();
     });
     expect(result.current.isCollapsed).toBe(false);
+    expect(result.current.width).toBe(DEFAULT_SIDEBAR_WIDTH);
+  });
+
+  it("resizes inset panels without jumping to the pointer's window coordinate", () => {
+    const { result } = renderHook(() => useSidebarState());
+    const handle = render(createElement("div", {
+      onPointerDown: result.current.handleResizerPointerDown,
+      "data-testid": "resize-handle",
+    })).getByTestId("resize-handle");
+
+    fireEvent(handle, new MouseEvent("pointerdown", { clientX: 252, bubbles: true }));
+    act(() => { window.dispatchEvent(new MouseEvent("pointermove", { clientX: 252 })); });
+    expect(result.current.width).toBe(DEFAULT_SIDEBAR_WIDTH);
+
+    act(() => { window.dispatchEvent(new MouseEvent("pointermove", { clientX: 300 })); });
+    expect(result.current.width).toBe(DEFAULT_SIDEBAR_WIDTH + 48);
+    expect(localStorage.getItem("localnote:sidebar-width")).toBe(String(DEFAULT_SIDEBAR_WIDTH + 48));
+
+    act(() => { window.dispatchEvent(new MouseEvent("pointermove", { clientX: 100 })); });
+    expect(result.current.isCollapsed).toBe(true);
+    act(() => { window.dispatchEvent(new MouseEvent("pointermove", { clientX: 252 })); });
+    expect(result.current.isCollapsed).toBe(false);
+    expect(result.current.width).toBe(DEFAULT_SIDEBAR_WIDTH);
+
+    act(() => { window.dispatchEvent(new MouseEvent("pointerup")); });
+    expect(result.current.isResizing).toBe(false);
+    act(() => { window.dispatchEvent(new MouseEvent("pointermove", { clientX: 450 })); });
     expect(result.current.width).toBe(DEFAULT_SIDEBAR_WIDTH);
   });
 });

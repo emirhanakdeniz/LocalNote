@@ -72,10 +72,12 @@ export function useTocState() {
   const handleResizerPointerDown = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsResizing(true);
+    const startX = event.clientX;
+    const startWidth = widthRef.current;
 
     const onPointerMove = (moveEvent: PointerEvent) => {
       // TOC is on the right side of the window, so dragging left increases width:
-      const calculatedWidth = window.innerWidth - moveEvent.clientX;
+      const calculatedWidth = startWidth + startX - moveEvent.clientX;
       if (calculatedWidth < MIN_TOC_WIDTH - 40) {
         if (isVisibleRef.current) {
           setVisible(false);

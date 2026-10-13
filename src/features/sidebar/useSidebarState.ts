@@ -69,10 +69,12 @@ export function useSidebarState() {
   const handleResizerPointerDown = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsResizing(true);
+    const startX = event.clientX;
+    const startWidth = isCollapsedRef.current ? COLLAPSED_SIDEBAR_WIDTH : widthRef.current;
 
     const onPointerMove = (moveEvent: PointerEvent) => {
-      const clientX = moveEvent.clientX;
-      if (clientX < MIN_SIDEBAR_WIDTH - 40) {
+      const calculatedWidth = startWidth + moveEvent.clientX - startX;
+      if (calculatedWidth < MIN_SIDEBAR_WIDTH - 40) {
         if (!isCollapsedRef.current) {
           setCollapsed(true);
         }
@@ -80,7 +82,7 @@ export function useSidebarState() {
         if (isCollapsedRef.current) {
           setCollapsed(false);
         }
-        updateWidth(clientX);
+        updateWidth(calculatedWidth);
       }
     };
 

@@ -1,4 +1,5 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, fireEvent, render, renderHook } from "@testing-library/react";
+import { createElement } from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   DEFAULT_TOC_WIDTH,
@@ -68,6 +69,32 @@ describe("useTocState", () => {
     act(() => {
       result.current.handleResizerDoubleClick();
     });
+    expect(result.current.width).toBe(DEFAULT_TOC_WIDTH);
+  });
+
+  it("resizes inset contents from pointer movement and keeps hide/reopen behavior", () => {
+    const { result } = renderHook(() => useTocState());
+    const handle = render(createElement("div", {
+      onPointerDown: result.current.handleResizerPointerDown,
+      "data-testid": "resize-handle",
+    })).getByTestId("resize-handle");
+
+    fireEvent(handle, new MouseEvent("pointerdown", { clientX: 780, bubbles: true }));
+    act(() => { window.dispatchEvent(new MouseEvent("pointermove", { clientX: 780 })); });
+    expect(result.current.width).toBe(DEFAULT_TOC_WIDTH);
+    act(() => { window.dispatchEvent(new MouseEvent("pointermove", { clientX: 732 })); });
+    expect(result.current.width).toBe(DEFAULT_TOC_WIDTH + 48);
+    expect(localStorage.getItem("localnote:toc-width")).toBe(String(DEFAULT_TOC_WIDTH + 48));
+
+    act(() => { window.dispatchEvent(new MouseEvent("pointermove", { clientX: 900 })); });
+    expect(result.current.isVisible).toBe(false);
+    act(() => { window.dispatchEvent(new MouseEvent("pointermove", { clientX: 780 })); });
+    expect(result.current.isVisible).toBe(true);
+    expect(result.current.width).toBe(DEFAULT_TOC_WIDTH);
+
+    act(() => { window.dispatchEvent(new MouseEvent("pointercancel")); });
+    expect(result.current.isResizing).toBe(false);
+    act(() => { window.dispatchEvent(new MouseEvent("pointermove", { clientX: 600 })); });
     expect(result.current.width).toBe(DEFAULT_TOC_WIDTH);
   });
 });
