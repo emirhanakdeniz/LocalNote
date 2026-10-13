@@ -12,6 +12,12 @@ const FINAL_TOKEN_NAMES = [
   "--color-text-subtle",
   "--color-separator",
   "--color-border",
+  "--color-layer-edge",
+  "--color-scrollbar",
+  "--color-scrollbar-hover",
+  "--shadow-panel",
+  "--shadow-menu",
+  "--shadow-dialog",
 ] as const;
 
 function tokens(block: string) {

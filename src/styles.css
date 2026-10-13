@@ -19,9 +19,10 @@
   --color-focus-ring: var(--color-focus);
   --shadow-sm: none;
   --shadow-md: none;
-  --shadow-lg: none;
-  --shadow-menu: none;
-  --shadow-dialog: none;
+  --shadow-lg: var(--shadow-dialog);
+  --shadow-panel: 0 1px 3px rgba(42, 36, 30, 0.08), 0 2px 6px rgba(42, 36, 30, 0.04);
+  --shadow-menu: 0 4px 14px rgba(42, 36, 30, 0.14);
+  --shadow-dialog: 0 12px 32px rgba(42, 36, 30, 0.16), 0 3px 8px rgba(42, 36, 30, 0.08);
   --sidebar-width: 220px;
   --toc-width: 230px;
   --content-width: 46rem;
@@ -46,6 +47,9 @@
   --color-separator: #ded7ce;
   --color-border: #8d8072;
   --color-border-subtle: #e6dfd6;
+  --color-layer-edge: rgba(42, 36, 30, 0.06);
+  --color-scrollbar: #c9c0b6;
+  --color-scrollbar-hover: #aaa095;
   --color-surface-hover: #e7e0d7;
   --color-surface-pressed: #dcd3c7;
   --color-code-background: #f0ece6;
@@ -83,6 +87,12 @@
   --color-separator: #333235;
   --color-border: #84776b;
   --color-border-subtle: #333235;
+  --color-layer-edge: rgba(0, 0, 0, 0.35);
+  --color-scrollbar: #494648;
+  --color-scrollbar-hover: #625d5a;
+  --shadow-panel: 0 1px 3px rgba(0, 0, 0, 0.32), 0 2px 6px rgba(0, 0, 0, 0.2);
+  --shadow-menu: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --shadow-dialog: 0 16px 40px rgba(0, 0, 0, 0.5), 0 3px 10px rgba(0, 0, 0, 0.35);
   --color-surface-hover: #302e2d;
   --color-surface-pressed: #3d3834;
   --color-code-background: #202022;
@@ -120,6 +130,12 @@
     --color-separator: #333235;
     --color-border: #84776b;
     --color-border-subtle: #333235;
+    --color-layer-edge: rgba(0, 0, 0, 0.35);
+    --color-scrollbar: #494648;
+    --color-scrollbar-hover: #625d5a;
+    --shadow-panel: 0 1px 3px rgba(0, 0, 0, 0.32), 0 2px 6px rgba(0, 0, 0, 0.2);
+    --shadow-menu: 0 6px 20px rgba(0, 0, 0, 0.45);
+    --shadow-dialog: 0 16px 40px rgba(0, 0, 0, 0.5), 0 3px 10px rgba(0, 0, 0, 0.35);
     --color-surface-hover: #302e2d;
     --color-surface-pressed: #3d3834;
     --color-code-background: #202022;
@@ -230,7 +246,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focu
 .quick-search__footer kbd { padding: 0.12rem 0.3rem; border: 1px solid var(--color-border); border-radius: 3px; background: var(--color-raised); font-size: 0.7rem; }
 
 .confirm-dialog-backdrop, .quick-search, .settings, .trash-dialog-backdrop { backdrop-filter: none; }
-.confirm-dialog, .quick-search__dialog, .settings__dialog, .trash-dialog { border-color: var(--color-border); border-radius: var(--radius-lg); }
+.confirm-dialog, .quick-search__dialog, .settings__dialog, .trash-dialog { border-color: var(--color-layer-edge); border-radius: var(--radius-lg); }
 .confirm-dialog__btn, .settings__button, .trash-dialog__action-btn { min-height: 2rem; }
 .trash-dialog__item-actions { opacity: 0; transition: opacity var(--transition-fast); }
 .trash-dialog__item:hover .trash-dialog__item-actions, .trash-dialog__item:focus-within .trash-dialog__item-actions { opacity: 1; }
@@ -394,10 +410,11 @@ button:focus-visible, input:focus-visible, select:focus-visible {
   min-width: 0;
   min-height: 0;
   flex-direction: column;
-  border: 1px solid var(--color-border-subtle);
+  border: 1px solid var(--color-layer-edge);
   border-radius: var(--radius-panel);
   background: var(--color-sidebar);
   user-select: none;
+  box-shadow: var(--shadow-panel);
 }
 
 .sidebar--collapsed {
@@ -411,7 +428,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
   overflow-x: hidden;
   padding: 0.65rem 0.5rem 1rem;
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
+  scrollbar-color: var(--color-scrollbar) transparent;
 }
 
 .sidebar__scroll-area--collapsed {
@@ -757,7 +774,7 @@ button.page-tree__disclosure:hover {
   right: 0;
   width: min(13rem, calc(var(--sidebar-width) - 0.75rem));
   padding: 0.3rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-layer-edge);
   border-radius: var(--radius-md);
   background: var(--color-raised);
   box-shadow: var(--shadow-menu);
@@ -996,13 +1013,14 @@ button.page-tree__disclosure:hover {
   min-height: 0;
   flex: 1;
   height: 100%;
-  border: 1px solid var(--color-border-subtle);
+  border: 1px solid var(--color-layer-edge);
   border-radius: var(--radius-panel);
   overflow-y: auto;
   overflow-x: hidden;
   background: var(--color-editor);
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
+  scrollbar-color: var(--color-scrollbar) transparent;
+  box-shadow: var(--shadow-panel);
 }
 
 .document {
@@ -1250,11 +1268,12 @@ button.page-tree__disclosure:hover {
   flex-direction: column;
   flex: 0 0 auto;
   min-height: 0;
-  border: 1px solid var(--color-border-subtle);
+  border: 1px solid var(--color-layer-edge);
   border-radius: var(--radius-panel);
   background: var(--color-sidebar);
   user-select: none;
   overflow: visible;
+  box-shadow: var(--shadow-panel);
 }
 
 .table-of-contents__resizer {
@@ -1341,7 +1360,7 @@ button.page-tree__disclosure:hover {
   overflow-y: auto;
   padding: 0.6rem 0.5rem;
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
+  scrollbar-color: var(--color-scrollbar) transparent;
 }
 
 .table-of-contents__empty {
@@ -1433,11 +1452,11 @@ button.page-tree__disclosure:hover {
   position: absolute;
   z-index: 200;
   padding: 0.24rem 0.5rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-layer-edge);
   border-radius: var(--radius-sm);
   color: var(--color-text);
   background: var(--color-raised);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-panel);
   font-size: 0.68rem;
   font-weight: 500;
   white-space: nowrap;
@@ -1484,7 +1503,7 @@ button.page-tree__disclosure:hover {
 .quick-search__dialog {
   width: min(36rem, 100%);
   overflow: hidden;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-layer-edge);
   border-radius: var(--radius-lg);
   background: var(--color-raised);
   box-shadow: var(--shadow-dialog);
@@ -1603,13 +1622,13 @@ button.page-tree__disclosure:hover {
   width: min(34rem, 100%);
   max-height: calc(100dvh - 2rem);
   overflow-y: auto;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-layer-edge);
   border-radius: var(--radius-lg);
   outline: none;
   background: var(--color-raised);
   box-shadow: var(--shadow-dialog);
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
+  scrollbar-color: var(--color-scrollbar) transparent;
 }
 
 .settings__header {
@@ -2047,7 +2066,7 @@ button.page-tree__disclosure:hover {
 .settings__storage-card {
   min-width: 0;
   padding: 0.75rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-md);
   background: var(--color-editor);
 }
@@ -2233,7 +2252,7 @@ button.page-tree__disclosure:hover {
   width: 100%;
   max-width: 24rem;
   padding: 1.25rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-layer-edge);
   border-radius: var(--radius-lg);
   background: var(--color-raised);
   box-shadow: var(--shadow-lg);
@@ -2357,7 +2376,7 @@ button.page-tree__disclosure:hover {
   width: 100%;
   max-width: 32rem;
   max-height: min(34rem, calc(100vh - 4rem));
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-layer-edge);
   border-radius: var(--radius-lg);
   background: var(--color-raised);
   box-shadow: var(--shadow-lg);
@@ -2646,13 +2665,14 @@ button.page-tree__disclosure:hover {
   min-width: 0;
   min-height: 0;
   overflow: auto;
-  border: 1px solid var(--color-border-subtle);
+  border: 1px solid var(--color-layer-edge);
   border-radius: var(--radius-panel);
   place-items: center;
   padding: 2rem;
   color: var(--color-text-secondary);
   background: var(--color-editor);
   text-align: center;
+  box-shadow: var(--shadow-panel);
 }
 
 .empty-document h1 {
@@ -2702,7 +2722,11 @@ button.page-tree__disclosure:hover {
 
 *::-webkit-scrollbar-thumb {
   border-radius: var(--radius-full);
-  background: var(--color-border);
+  background: var(--color-scrollbar);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--color-scrollbar-hover);
 }
 
 *::-webkit-scrollbar-track {

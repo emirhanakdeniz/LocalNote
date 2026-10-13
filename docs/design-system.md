@@ -13,7 +13,7 @@ LocalNote uses a matte Windows workbench: a quiet navigation rail, a readable no
 | Secondary text | `#63594F` | `#BFB5AA` |
 | Control border | `#8D8072` | `#84776B` |
 
-Segoe UI Variable provides Windows-native text and titles; Cascadia/Consolas is reserved for code, paths, and shortcuts. All fonts are local system fonts. A 46rem note measure, compact sentence-case labels, and spacing communicate hierarchy. Controls use 4–8px radii; workspace panels use 10px radii. Surfaces have solid fills, structural borders, and no decorative shadows, blur, glow, or gradients.
+Segoe UI Variable provides Windows-native text and titles; Cascadia/Consolas is reserved for code, paths, and shortcuts. All fonts are local system fonts. A 46rem note measure, compact sentence-case labels, and spacing communicate hierarchy. Controls use 4–8px radii; workspace panels use 10px radii. Surfaces have solid fills. Soft, neutral shadows separate workspace panels and floating windows, with stronger shadows for dialogs. Outer edges use a faint dark stroke rather than a bright outline; control boundaries and keyboard focus remain distinct. No blur, glow, or gradients are used.
 
 Local Blue remains the default accent. Existing saved colors remain unchanged. Small accent labels and focus indicators use separate contrast-adjusted light/dark colors; filled controls keep the user's selected color and choose readable text. Semantic save, warning, and error states retain both text and color.
 
@@ -31,6 +31,6 @@ The script uses the installed Tauri CLI, refreshes existing platform assets, add
 
 ## Layout and interaction
 
-Keep the three-region layout, resizable panels, collapsed navigation, narrow-window overlay, and focus mode. Dialogs and menus use opaque surfaces with a border; modal scrims separate background content without blur. Visible keyboard focus, Escape/focus restoration, readable save errors, and reduced motion remain part of the product system.
+Keep the three-region layout, resizable panels, collapsed navigation, narrow-window overlay, and focus mode. Dialogs and menus use opaque surfaces with soft shadow separation; modal scrims separate background content without blur. Neutral scrollbar colors are independent of higher-contrast control borders. Visible keyboard focus, Escape/focus restoration, readable save errors, and reduced motion remain part of the product system.
 
-Navigation, the editor, and contents are separate panel islands, with 8px outer insets and 8px gaps on the quiet canvas. Each panel has a 10px corner radius and a subtle structural border. The editor scrolls inside its panel; empty/loading/error states occupy the same island. Resize handles sit in the gaps and calculate width from pointer movement rather than the window edge. Focus mode retains the inset editor island. Narrow-window navigation opens as an inset panel above the scrim.
+Navigation, the editor, and contents are separate panel islands, with 8px outer insets and 8px gaps on the quiet canvas. Each panel has a 10px corner radius, a faint dark edge, and a compact soft shadow. The editor scrolls inside its panel; empty/loading/error states occupy the same island. Resize handles sit in the gaps and calculate width from pointer movement rather than the window edge. Focus mode retains the inset editor island. Narrow-window navigation opens as an inset panel above the scrim.

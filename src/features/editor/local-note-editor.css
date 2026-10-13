@@ -308,7 +308,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-layer-edge);
   border-radius: var(--radius-md);
   background: var(--color-raised);
   box-shadow: var(--shadow-menu);
@@ -338,7 +338,7 @@
   overflow-y: auto;
   padding: 0.25rem;
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
+  scrollbar-color: var(--color-scrollbar) transparent;
 }
 
 .code-language-picker__list button {
@@ -429,7 +429,7 @@
 .bn-mantine .mantine-Menu-dropdown,
 .bn-mantine .bn-toolbar,
 .bn-mantine .bn-panel {
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-layer-edge);
   border-radius: var(--radius-md);
   background: var(--color-raised);
   box-shadow: var(--shadow-menu);
@@ -502,7 +502,7 @@
   z-index: 100;
   min-width: 13.5rem;
   padding: 0.3rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-layer-edge);
   border-radius: var(--radius-md);
   background: var(--color-raised);
   box-shadow: var(--shadow-menu);
