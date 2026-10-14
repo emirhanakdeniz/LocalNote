@@ -344,7 +344,7 @@ describe("LocalNote page management", () => {
     expect(within(dialog).getByRole("heading", { name: "Storage" })).toBeVisible();
     expect(within(dialog).getByRole("heading", { name: "Backup" })).toBeVisible();
     expect(within(dialog).getByRole("heading", { name: "About" })).toBeVisible();
-    expect(within(dialog).getByText("Version 1.1.1")).toBeVisible();
+    expect(within(dialog).getByText("Version 1.1.2")).toBeVisible();
     expect(within(dialog).getByText(/stored only on this device/i)).toBeVisible();
     expect(await within(dialog).findByText("C:\\Users\\User\\AppData\\Local\\LocalNote")).toBeVisible();
 

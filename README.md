@@ -1,12 +1,10 @@
+![LocalNote — local-first note taking for Windows, by ea., part of eaworks](docs/localnote-github-banner.png)
+
 # LocalNote
 
 <p align="center">
   <strong>A fast, private, and local-only desktop block-based note-taking application.</strong><br />
-  <sub>by ea.</sub>
-</p>
-
-<p align="center">
-  <img src="public/app-icon.png" alt="LocalNote Icon" width="96" height="96" />
+  <sub>by ea. · Part of eaworks</sub>
 </p>
 
 <p align="center">
@@ -16,10 +14,6 @@
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="React 19" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/License-PolyForm--Noncommercial--1.0.0-orange.svg" alt="License: PolyForm Noncommercial 1.0.0" />
-</p>
-
-<p align="center">
-  <img src="docs/screenshots/localnote-dark.png" alt="LocalNote Dark Theme Preview" width="780" />
 </p>
 
 ---
@@ -46,56 +40,6 @@ It brings the familiar, flexible block-based editing experience of modern produc
 - 📤 **Markdown Export**: Export any note to standard `.md` format with sanitized, OS-safe file naming.
 - 💾 **Transparent Local Storage**: Inspect, copy, or open the live data and Markdown backup locations directly from Settings.
 - 🔒 **Private by Design**: Zero telemetry, analytics, authentication, or network APIs — fully functional offline, guarded by a strict CSP (`default-src 'self'`).
-
----
-
-## Screenshots (previous appearance)
-
-These screenshots predate the matte workbench update. See the [current visual system and icon generation instructions](docs/design-system.md) for the updated palette, typography, and artwork.
-
-<table align="center">
-  <tr>
-    <td align="center" width="50%">
-      <strong>🌙 Dark Theme</strong><br />
-      <img src="docs/screenshots/localnote-dark.png" alt="LocalNote Dark Theme" />
-    </td>
-    <td align="center" width="50%">
-      <strong>☀️ Light Theme</strong><br />
-      <img src="docs/screenshots/localnote-light.png" alt="LocalNote Light Theme" />
-    </td>
-  </tr>
-</table>
-
-<p align="center">
-  <em>Distraction-free block editor, dynamic table of contents, breadcrumb trail, and live word/character counters.</em>
-</p>
-
-<br />
-
-<table align="center">
-  <tr>
-    <td align="center" width="50%">
-      <strong>⚙️ Appearance & Editor Settings</strong><br />
-      <img src="docs/screenshots/localnote-settings.png" alt="LocalNote Appearance and Editor Settings" />
-    </td>
-    <td align="center" width="50%">
-      <strong>💾 Storage & Backups</strong><br />
-      <img src="docs/screenshots/localnote-storage-backup.png" alt="LocalNote Storage, Backup, Import, and About Settings" />
-    </td>
-  </tr>
-</table>
-
-<p align="center">
-  <em>Choose a theme and accent, manage spellcheck, inspect local storage, and back up or import Markdown notes.</em>
-</p>
-
-<br />
-
-<p align="center">
-  <strong>🗑️ Trash</strong><br />
-  <img src="docs/screenshots/localnote-trash.png" alt="LocalNote Trash Dialog" width="780" /><br />
-  <em>Review deleted notes in a focused dialog before restoring or permanently removing them.</em>
-</p>
 
 ---
 
@@ -164,6 +108,7 @@ flowchart TD
 ```text
 LocalNote/
 ├── docs/                       # Documentation & media assets
+│   ├── localnote-github-banner.png # README banner
 │   └── screenshots/            # In-app application screenshots
 ├── public/                     # Static assets (App icon)
 ├── src/                        # Frontend React application
@@ -218,7 +163,7 @@ Ensure you have the following installed on your Windows machine:
 
 Download the latest release from the **[Releases](../../releases)** page:
 
-- **`LocalNote_1.1.1_x64-setup.exe`**: Standard Windows installer (NSIS)
+- **`LocalNote_1.1.2_x64-setup.exe`**: Standard Windows installer (NSIS)
 - **`localnote.exe`**: Portable standalone executable
 
 ### Development
@@ -250,7 +195,7 @@ npm run tauri build
 The compiled binaries will be output to:
 ```text
 src-tauri/target/release/localnote.exe
-src-tauri/target/release/bundle/nsis/LocalNote_1.1.1_x64-setup.exe
+src-tauri/target/release/bundle/nsis/LocalNote_1.1.2_x64-setup.exe
 ```
 
 ---
