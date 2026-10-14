@@ -196,428 +196,438 @@ export function SettingsDialog({
       >
         <header className="settings__header">
           <h1 id="settings-title">Settings</h1>
-          <button type="button" aria-label="Close settings" onClick={close}>×</button>
+          <button type="button" aria-label="Close settings" onClick={close}>
+            <Icon name="x" />
+          </button>
         </header>
 
-        <section className="settings__section" aria-labelledby="settings-appearance">
-          <h2 id="settings-appearance">Appearance</h2>
-          <fieldset>
-            <legend>Theme</legend>
-            <p className="settings__field-description">Choose how LocalNote looks.</p>
-            <div className="settings__options">
-              {themeOptions.map((option) => (
-                <label key={option.value}>
-                  <input
-                    type="radio"
-                    name="theme"
-                    value={option.value}
-                    checked={theme === option.value}
-                    onChange={() => onThemeChange(option.value)}
-                  />
-                  <span>{option.label}</span>
-                </label>
-              ))}
+        <div className="settings__body">
+          <section className="settings__section settings__about" aria-labelledby="settings-about">
+            <h2 id="settings-about">About</h2>
+            <div className="settings__about-product">
+              <img src="/app-icon.svg" width="96" height="96" alt="" />
+              <div>
+                <strong>LocalNote</strong>
+                <span>Version 1.1.1</span>
+                <p>Fast, private notes stored only on this device. No account or cloud service.</p>
+              </div>
             </div>
-          </fieldset>
-          {themeError && <p className="settings__error" role="alert">{themeError}</p>}
+          </section>
 
-          <fieldset className="settings__accent-fieldset">
-            <legend>Accent Color</legend>
-            <p className="settings__field-description">
-              Choose a color for active highlights, buttons, and note accents.
-            </p>
-            <div className="settings__accent-presets" role="radiogroup" aria-label="Accent color presets">
-              {ACCENT_PRESETS.map((preset) => {
-                const isSelected = normalizeHex(accentColor) === normalizeHex(preset.hex);
-                return (
-                  <button
-                    key={preset.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={isSelected}
-                    aria-label={preset.name}
-                    title={`${preset.name} (${preset.hex})`}
-                    className={`settings__accent-swatch${isSelected ? " settings__accent-swatch--active" : ""}`}
-                    style={{ "--swatch-color": preset.hex } as React.CSSProperties}
-                    onClick={() => {
-                      onAccentColorChange(preset.hex);
-                      setHexInput(preset.hex.toUpperCase());
+          <section className="settings__section" aria-labelledby="settings-appearance">
+            <h2 id="settings-appearance">Appearance</h2>
+            <fieldset>
+              <legend>Theme</legend>
+              <p className="settings__field-description">Choose how LocalNote looks.</p>
+              <div className="settings__options">
+                {themeOptions.map((option) => (
+                  <label key={option.value}>
+                    <input
+                      type="radio"
+                      name="theme"
+                      value={option.value}
+                      checked={theme === option.value}
+                      onChange={() => onThemeChange(option.value)}
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+            {themeError && <p className="settings__error" role="alert">{themeError}</p>}
+
+            <fieldset className="settings__accent-fieldset">
+              <legend>Accent Color</legend>
+              <p className="settings__field-description">
+                Choose a color for active highlights, buttons, and note accents.
+              </p>
+              <div className="settings__accent-presets" role="radiogroup" aria-label="Accent color presets">
+                {ACCENT_PRESETS.map((preset) => {
+                  const isSelected = normalizeHex(accentColor) === normalizeHex(preset.hex);
+                  return (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={isSelected}
+                      aria-label={preset.name}
+                      title={`${preset.name} (${preset.hex})`}
+                      className={`settings__accent-swatch${isSelected ? " settings__accent-swatch--active" : ""}`}
+                      style={{ "--swatch-color": preset.hex } as React.CSSProperties}
+                      onClick={() => {
+                        onAccentColorChange(preset.hex);
+                        setHexInput(preset.hex.toUpperCase());
+                      }}
+                    >
+                      {isSelected && (
+                        <svg
+                          className="settings__accent-check"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M3.5 8.5L6.5 11.5L12.5 4.5"
+                            strokeWidth="2.2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="settings__accent-custom">
+                <label
+                  className="settings__accent-picker-button"
+                  title="Choose custom color with color picker"
+                >
+                  <input
+                    type="color"
+                    value={isValidHex(accentColor) ? normalizeHex(accentColor) : "#3b6fe5"}
+                    onChange={(e) => {
+                      onAccentColorChange(e.target.value);
+                      setHexInput(e.target.value.toUpperCase());
                     }}
-                  >
-                    {isSelected && (
-                      <svg
-                        className="settings__accent-check"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        stroke="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          d="M3.5 8.5L6.5 11.5L12.5 4.5"
-                          strokeWidth="2.2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="settings__accent-custom">
-              <label
-                className="settings__accent-picker-button"
-                title="Choose custom color with color picker"
-              >
-                <input
-                  type="color"
-                  value={isValidHex(accentColor) ? normalizeHex(accentColor) : "#3b6fe5"}
-                  onChange={(e) => {
-                    onAccentColorChange(e.target.value);
-                    setHexInput(e.target.value.toUpperCase());
-                  }}
-                  aria-label="Color picker"
-                />
-                <span
-                  className="settings__accent-picker-preview"
-                  style={{
-                    backgroundColor: isValidHex(accentColor)
-                      ? normalizeHex(accentColor)
-                      : "#3b6fe5",
-                  }}
-                />
-              </label>
-              <input
-                type="text"
-                className="settings__accent-hex-input"
-                value={hexInput}
-                placeholder="#3B6FE5"
-                maxLength={7}
-                spellCheck={false}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setHexInput(val.toUpperCase());
-                  if (isValidHex(val)) {
-                    onAccentColorChange(val);
-                  }
-                }}
-                onBlur={() => {
-                  if (!isValidHex(hexInput)) {
-                    setHexInput(accentColor.toUpperCase());
-                  } else {
-                    setHexInput(normalizeHex(hexInput).toUpperCase());
-                  }
-                }}
-                aria-label="Custom hex color code"
-              />
-            </div>
-          </fieldset>
-          {accentColorError && <p className="settings__error" role="alert">{accentColorError}</p>}
-        </section>
-
-        <section className="settings__section" aria-labelledby="settings-editor">
-          <h2 id="settings-editor">Editor</h2>
-          <fieldset>
-            <legend>Spellcheck</legend>
-            <p className="settings__field-description">
-              Use the local system spellchecker or turn it off.
-            </p>
-            <div className="settings__options">
-              {spellcheckOptions.map((option) => (
-                <label key={option.value}>
-                  <input
-                    type="radio"
-                    name="spellcheck"
-                    value={option.value}
-                    checked={spellcheck === option.value}
-                    onChange={() => onSpellcheckChange(option.value)}
+                    aria-label="Color picker"
                   />
-                  <span>{option.label}</span>
+                  <span
+                    className="settings__accent-picker-preview"
+                    style={{
+                      backgroundColor: isValidHex(accentColor)
+                        ? normalizeHex(accentColor)
+                        : "#3b6fe5",
+                    }}
+                  />
                 </label>
-              ))}
-            </div>
-          </fieldset>
-          {spellcheckError && <p className="settings__error" role="alert">{spellcheckError}</p>}
-        </section>
-
-        <section className="settings__section" aria-labelledby="settings-storage">
-          <h2 id="settings-storage">Storage</h2>
-          <p className="settings__field-description">
-            LocalNote keeps working data and Markdown backups in separate locations.
-          </p>
-
-          {storageInfo ? (
-            <div className="settings__storage-locations">
-              <article className="settings__storage-card">
-                <div className="settings__storage-heading">
-                  <div>
-                    <strong>Live app data</strong>
-                    <span>Notes, settings, and app working files</span>
-                  </div>
-                  <span className="settings__storage-badge">Local</span>
-                </div>
-                <code className="settings__storage-path" title={storageInfo.dataRoot}>
-                  {storageInfo.dataRoot}
-                </code>
-                <dl className="settings__storage-details">
-                  <div>
-                    <dt>Database</dt>
-                    <dd title={storageInfo.databasePath}>{storageInfo.databasePath}</dd>
-                  </div>
-                  <div>
-                    <dt>WebView</dt>
-                    <dd title={storageInfo.webviewDataPath}>{storageInfo.webviewDataPath}</dd>
-                  </div>
-                </dl>
-                <p className="settings__storage-note">
-                  The WebView folder contains the app cache and interface preferences.
-                </p>
-                <div className="settings__storage-actions">
-                  <button
-                    type="button"
-                    className="settings__button settings__button--secondary"
-                    aria-label="Open live app data folder"
-                    onClick={() => void openStorageFolder("data")}
-                  >
-                    <Icon name="folder-plus" />
-                    Open folder
-                  </button>
-                  <button
-                    type="button"
-                    className="settings__button settings__button--secondary"
-                    aria-label="Copy live app data path"
-                    onClick={() => void copyStoragePath("data", storageInfo.dataRoot)}
-                  >
-                    <Icon name="copy" />
-                    Copy path
-                  </button>
-                </div>
-                {storageFeedback?.target === "data" && (
-                  <p
-                    className={`settings__storage-feedback settings__storage-feedback--${storageFeedback.kind}`}
-                    role={storageFeedback.kind === "error" ? "alert" : "status"}
-                  >
-                    {storageFeedback.message}
-                  </p>
-                )}
-              </article>
-
-              <article className="settings__storage-card">
-                <div className="settings__storage-heading">
-                  <div>
-                    <strong>Markdown backups</strong>
-                    <span>Readable copies created with Backup all notes</span>
-                  </div>
-                  <span className="settings__storage-badge settings__storage-badge--backup">Documents</span>
-                </div>
-                <code className="settings__storage-path" title={storageInfo.backupPath}>
-                  {storageInfo.backupPath}
-                </code>
-                <div className="settings__storage-actions">
-                  <button
-                    type="button"
-                    className="settings__button settings__button--secondary"
-                    aria-label="Open Markdown backup folder"
-                    onClick={() => void openStorageFolder("backup")}
-                  >
-                    <Icon name="folder-plus" />
-                    Open folder
-                  </button>
-                  <button
-                    type="button"
-                    className="settings__button settings__button--secondary"
-                    aria-label="Copy Markdown backup path"
-                    onClick={() => void copyStoragePath("backup", storageInfo.backupPath)}
-                  >
-                    <Icon name="copy" />
-                    Copy path
-                  </button>
-                </div>
-                {storageFeedback?.target === "backup" && (
-                  <p
-                    className={`settings__storage-feedback settings__storage-feedback--${storageFeedback.kind}`}
-                    role={storageFeedback.kind === "error" ? "alert" : "status"}
-                  >
-                    {storageFeedback.message}
-                  </p>
-                )}
-              </article>
-            </div>
-          ) : storageError ? (
-            <p className="settings__error" role="alert">{storageError}</p>
-          ) : (
-            <p className="settings__storage-loading" role="status">Loading storage locations…</p>
-          )}
-        </section>
-
-        <section className="settings__section" aria-labelledby="settings-backup">
-          <h2 id="settings-backup">Backup</h2>
-          <p className="settings__field-description">
-            Export all your notes as Markdown files into the <code>Documents/LocalNote Backups</code> folder.
-          </p>
-
-          {backupStatus === "idle" && (
-            <div className="settings__backup-action">
-              <button
-                type="button"
-                className="settings__button settings__button--primary"
-                onClick={onStartBackup}
-              >
-                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M8 2v8M4.5 7.5L8 11l3.5-3.5M2.5 13.5h11" />
-                </svg>
-                <span>Backup all notes</span>
-              </button>
-            </div>
-          )}
-
-          {backupStatus === "in_progress" && (
-            <div className="settings__backup-progress" role="status" aria-live="polite">
-              <div className="settings__backup-progress-header">
-                <span className="settings__backup-spinner" aria-hidden="true" />
-                <div className="settings__backup-progress-text">
-                  <strong>
-                    {backupProgress.total > 0
-                      ? `Exporting note ${backupProgress.current} of ${backupProgress.total}…`
-                      : "Preparing backup…"}
-                  </strong>
-                  <span className="settings__backup-note-title" title={backupProgress.noteTitle}>
-                    {backupProgress.noteTitle}
-                  </span>
-                </div>
-              </div>
-              <div
-                className="settings__progress-bar"
-                role="progressbar"
-                aria-valuenow={backupProgress.total > 0 ? Math.round((backupProgress.current / backupProgress.total) * 100) : 0}
-                aria-valuemin={0}
-                aria-valuemax={100}
-              >
-                <div
-                  className="settings__progress-fill"
-                  style={{
-                    width: `${backupProgress.total > 0 ? Math.max(5, Math.round((backupProgress.current / backupProgress.total) * 100)) : 10}%`,
+                <input
+                  type="text"
+                  className="settings__accent-hex-input"
+                  value={hexInput}
+                  placeholder="#3B6FE5"
+                  maxLength={7}
+                  spellCheck={false}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setHexInput(val.toUpperCase());
+                    if (isValidHex(val)) {
+                      onAccentColorChange(val);
+                    }
                   }}
+                  onBlur={() => {
+                    if (!isValidHex(hexInput)) {
+                      setHexInput(accentColor.toUpperCase());
+                    } else {
+                      setHexInput(normalizeHex(hexInput).toUpperCase());
+                    }
+                  }}
+                  aria-label="Custom hex color code"
                 />
               </div>
-            </div>
-          )}
+            </fieldset>
+            {accentColorError && <p className="settings__error" role="alert">{accentColorError}</p>}
+          </section>
 
-          {backupStatus === "success" && (
-            <div className="settings__backup-success" role="status" aria-live="polite">
-              <div className="settings__backup-success-header">
-                <div className="settings__backup-success-icon" aria-hidden="true">
-                  <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3.5 8.5L6.5 11.5L12.5 4.5" />
-                  </svg>
-                </div>
-                <div className="settings__backup-success-details">
-                  <strong>Backup complete!</strong>
-                  <p>
-                    {backupExportedCount} {backupExportedCount === 1 ? "note" : "notes"} exported to:
-                  </p>
-                  {backupDestination && (
-                    <code className="settings__backup-path" title={backupDestination}>
-                      {backupDestination}
-                    </code>
-                  )}
-                </div>
+          <section className="settings__section" aria-labelledby="settings-editor">
+            <h2 id="settings-editor">Editor</h2>
+            <fieldset>
+              <legend>Spellcheck</legend>
+              <p className="settings__field-description">
+                Use the local system spellchecker or turn it off.
+              </p>
+              <div className="settings__options">
+                {spellcheckOptions.map((option) => (
+                  <label key={option.value}>
+                    <input
+                      type="radio"
+                      name="spellcheck"
+                      value={option.value}
+                      checked={spellcheck === option.value}
+                      onChange={() => onSpellcheckChange(option.value)}
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
               </div>
-              <div className="settings__backup-success-actions">
-                <button
-                  type="button"
-                  className="settings__button settings__button--primary"
-                  onClick={onOpenBackupFolder}
-                >
-                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M1.5 3.5h4l1.5 2h7.5v8H1.5z" />
-                  </svg>
-                  <span>Open Folder</span>
-                </button>
-                <button
-                  type="button"
-                  className="settings__button settings__button--secondary"
-                  onClick={onResetBackup}
-                >
-                  Backup Again
-                </button>
-              </div>
-            </div>
-          )}
+            </fieldset>
+            {spellcheckError && <p className="settings__error" role="alert">{spellcheckError}</p>}
+          </section>
 
-          {backupStatus === "error" && (
-            <div className="settings__backup-error" role="alert">
-              <p className="settings__error">{backupError}</p>
-              <button
-                type="button"
-                className="settings__button settings__button--primary"
-                onClick={onStartBackup}
-              >
-                Retry Backup
-              </button>
-            </div>
-          )}
-
-          <div className="settings__import-markdown">
-            <h3>Import Markdown</h3>
+          <section className="settings__section" aria-labelledby="settings-storage">
+            <h2 id="settings-storage">Storage</h2>
             <p className="settings__field-description">
-              Choose one or more <code>.md</code> files. Each file becomes a new top-level note.
+              LocalNote keeps working data and Markdown backups in separate locations.
             </p>
-            {importStatus === "success" ? (
-              <div className="settings__backup-success settings__import-feedback" role="status" aria-live="polite">
-                <div className="settings__backup-success-details">
-                  <strong>Import complete!</strong>
-                  <p>{importCount} {importCount === 1 ? "note" : "notes"} imported.</p>
-                </div>
-                <button
-                  type="button"
-                  className="settings__button settings__button--secondary"
-                  onClick={onResetMarkdownImport}
-                >
-                  Import More
-                </button>
-              </div>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  className="settings__button settings__button--secondary"
-                  onClick={onStartMarkdownImport}
-                  disabled={importStatus === "in_progress"}
-                >
-                  {importStatus === "in_progress" && <span className="settings__backup-spinner" aria-hidden="true" />}
-                  <span>{importStatus === "in_progress" ? "Importing Markdown…" : "Import Markdown"}</span>
-                </button>
-                {importStatus === "error" && (
-                  <div className="settings__backup-error settings__import-feedback" role="alert">
-                    <p className="settings__error">{importError}</p>
+
+            {storageInfo ? (
+              <div className="settings__storage-locations">
+                <article className="settings__storage-card">
+                  <div className="settings__storage-heading">
+                    <div>
+                      <strong>Live app data</strong>
+                      <span>Notes, settings, and app working files</span>
+                    </div>
+                    <span className="settings__storage-badge">Local</span>
+                  </div>
+                  <code className="settings__storage-path" title={storageInfo.dataRoot}>
+                    {storageInfo.dataRoot}
+                  </code>
+                  <dl className="settings__storage-details">
+                    <div>
+                      <dt>Database</dt>
+                      <dd title={storageInfo.databasePath}>{storageInfo.databasePath}</dd>
+                    </div>
+                    <div>
+                      <dt>WebView</dt>
+                      <dd title={storageInfo.webviewDataPath}>{storageInfo.webviewDataPath}</dd>
+                    </div>
+                  </dl>
+                  <p className="settings__storage-note">
+                    The WebView folder contains the app cache and interface preferences.
+                  </p>
+                  <div className="settings__storage-actions">
                     <button
                       type="button"
                       className="settings__button settings__button--secondary"
-                      onClick={onStartMarkdownImport}
+                      aria-label="Open live app data folder"
+                      onClick={() => void openStorageFolder("data")}
                     >
-                      Retry Import
+                      <Icon name="folder-plus" />
+                      Open folder
+                    </button>
+                    <button
+                      type="button"
+                      className="settings__button settings__button--secondary"
+                      aria-label="Copy live app data path"
+                      onClick={() => void copyStoragePath("data", storageInfo.dataRoot)}
+                    >
+                      <Icon name="copy" />
+                      Copy path
                     </button>
                   </div>
-                )}
-              </>
-            )}
-          </div>
-        </section>
+                  {storageFeedback?.target === "data" && (
+                    <p
+                      className={`settings__storage-feedback settings__storage-feedback--${storageFeedback.kind}`}
+                      role={storageFeedback.kind === "error" ? "alert" : "status"}
+                    >
+                      {storageFeedback.message}
+                    </p>
+                  )}
+                </article>
 
-        <section className="settings__section settings__about" aria-labelledby="settings-about">
-          <h2 id="settings-about">About</h2>
-          <div className="settings__about-product">
-            <img src="/app-icon.svg" width="48" height="48" alt="" />
-            <div>
-              <strong>LocalNote</strong>
-              <span>Version 1.1.1</span>
-              <span className="settings__maker-credit">by ea.</span>
+                <article className="settings__storage-card">
+                  <div className="settings__storage-heading">
+                    <div>
+                      <strong>Markdown backups</strong>
+                      <span>Readable copies created with Backup all notes</span>
+                    </div>
+                    <span className="settings__storage-badge settings__storage-badge--backup">Documents</span>
+                  </div>
+                  <code className="settings__storage-path" title={storageInfo.backupPath}>
+                    {storageInfo.backupPath}
+                  </code>
+                  <div className="settings__storage-actions">
+                    <button
+                      type="button"
+                      className="settings__button settings__button--secondary"
+                      aria-label="Open Markdown backup folder"
+                      onClick={() => void openStorageFolder("backup")}
+                    >
+                      <Icon name="folder-plus" />
+                      Open folder
+                    </button>
+                    <button
+                      type="button"
+                      className="settings__button settings__button--secondary"
+                      aria-label="Copy Markdown backup path"
+                      onClick={() => void copyStoragePath("backup", storageInfo.backupPath)}
+                    >
+                      <Icon name="copy" />
+                      Copy path
+                    </button>
+                  </div>
+                  {storageFeedback?.target === "backup" && (
+                    <p
+                      className={`settings__storage-feedback settings__storage-feedback--${storageFeedback.kind}`}
+                      role={storageFeedback.kind === "error" ? "alert" : "status"}
+                    >
+                      {storageFeedback.message}
+                    </p>
+                  )}
+                </article>
+              </div>
+            ) : storageError ? (
+              <p className="settings__error" role="alert">{storageError}</p>
+            ) : (
+              <p className="settings__storage-loading" role="status">Loading storage locations…</p>
+            )}
+          </section>
+
+          <section className="settings__section" aria-labelledby="settings-backup">
+            <h2 id="settings-backup">Backup</h2>
+            <p className="settings__field-description">
+              Export all your notes as Markdown files into the <code>Documents/LocalNote Backups</code> folder.
+            </p>
+
+            {backupStatus === "idle" && (
+              <div className="settings__backup-action">
+                <button
+                  type="button"
+                  className="settings__button settings__button--primary"
+                  onClick={onStartBackup}
+                >
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M8 2v8M4.5 7.5L8 11l3.5-3.5M2.5 13.5h11" />
+                  </svg>
+                  <span>Backup all notes</span>
+                </button>
+              </div>
+            )}
+
+            {backupStatus === "in_progress" && (
+              <div className="settings__backup-progress" role="status" aria-live="polite">
+                <div className="settings__backup-progress-header">
+                  <span className="settings__backup-spinner" aria-hidden="true" />
+                  <div className="settings__backup-progress-text">
+                    <strong>
+                      {backupProgress.total > 0
+                        ? `Exporting note ${backupProgress.current} of ${backupProgress.total}…`
+                        : "Preparing backup…"}
+                    </strong>
+                    <span className="settings__backup-note-title" title={backupProgress.noteTitle}>
+                      {backupProgress.noteTitle}
+                    </span>
+                  </div>
+                </div>
+                <div
+                  className="settings__progress-bar"
+                  role="progressbar"
+                  aria-valuenow={backupProgress.total > 0 ? Math.round((backupProgress.current / backupProgress.total) * 100) : 0}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                >
+                  <div
+                    className="settings__progress-fill"
+                    style={{
+                      width: `${backupProgress.total > 0 ? Math.max(5, Math.round((backupProgress.current / backupProgress.total) * 100)) : 10}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {backupStatus === "success" && (
+              <div className="settings__backup-success" role="status" aria-live="polite">
+                <div className="settings__backup-success-header">
+                  <div className="settings__backup-success-icon" aria-hidden="true">
+                    <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3.5 8.5L6.5 11.5L12.5 4.5" />
+                    </svg>
+                  </div>
+                  <div className="settings__backup-success-details">
+                    <strong>Backup complete!</strong>
+                    <p>
+                      {backupExportedCount} {backupExportedCount === 1 ? "note" : "notes"} exported to:
+                    </p>
+                    {backupDestination && (
+                      <code className="settings__backup-path" title={backupDestination}>
+                        {backupDestination}
+                      </code>
+                    )}
+                  </div>
+                </div>
+                <div className="settings__backup-success-actions">
+                  <button
+                    type="button"
+                    className="settings__button settings__button--primary"
+                    onClick={onOpenBackupFolder}
+                  >
+                    <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M1.5 3.5h4l1.5 2h7.5v8H1.5z" />
+                    </svg>
+                    <span>Open Folder</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="settings__button settings__button--secondary"
+                    onClick={onResetBackup}
+                  >
+                    Backup Again
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {backupStatus === "error" && (
+              <div className="settings__backup-error" role="alert">
+                <p className="settings__error">{backupError}</p>
+                <button
+                  type="button"
+                  className="settings__button settings__button--primary"
+                  onClick={onStartBackup}
+                >
+                  Retry Backup
+                </button>
+              </div>
+            )}
+
+            <div className="settings__import-markdown">
+              <h3>Import Markdown</h3>
+              <p className="settings__field-description">
+                Choose one or more <code>.md</code> files. Each file becomes a new top-level note.
+              </p>
+              {importStatus === "success" ? (
+                <div className="settings__backup-success settings__import-feedback" role="status" aria-live="polite">
+                  <div className="settings__backup-success-details">
+                    <strong>Import complete!</strong>
+                    <p>{importCount} {importCount === 1 ? "note" : "notes"} imported.</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="settings__button settings__button--secondary"
+                    onClick={onResetMarkdownImport}
+                  >
+                    Import More
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="settings__button settings__button--secondary"
+                    onClick={onStartMarkdownImport}
+                    disabled={importStatus === "in_progress"}
+                  >
+                    {importStatus === "in_progress" && <span className="settings__backup-spinner" aria-hidden="true" />}
+                    <span>{importStatus === "in_progress" ? "Importing Markdown…" : "Import Markdown"}</span>
+                  </button>
+                  {importStatus === "error" && (
+                    <div className="settings__backup-error settings__import-feedback" role="alert">
+                      <p className="settings__error">{importError}</p>
+                      <button
+                        type="button"
+                        className="settings__button settings__button--secondary"
+                        onClick={onStartMarkdownImport}
+                      >
+                        Retry Import
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
-          </div>
-          <p>Fast, private notes stored only on this device. No account or cloud service.</p>
-        </section>
+          </section>
+
+        </div>
+        <footer className="settings__footer">
+          <span className="settings__maker-credit">by ea.</span>
+          <button type="button" className="settings__button settings__button--primary" onClick={close}>
+            Close
+          </button>
+        </footer>
       </div>
     </div>
   );

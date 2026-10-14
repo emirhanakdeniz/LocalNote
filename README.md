@@ -41,7 +41,7 @@ It brings the familiar, flexible block-based editing experience of modern produc
 - 🗂️ **Hierarchy, Organization & Trash**: Deep multi-level nested pages with cycle prevention, favorites, and two-stage delete protection with a dedicated **Trash** surface for restore or permanent purge.
 - 🎨 **Matte Windows Workbench**: A readable three-pane layout with separate rounded panel islands, a flat notebook icon, paper-toned light surfaces, charcoal/graphite dark surfaces, hierarchy breadcrumbs, local save status, and a compact navigation overlay at smaller window sizes.
 - 🎨 **Themes & Accent Palettes**: Light, Dark, and System themes, Local Blue as the default for new installations, curated accents, and custom HEX colors with contrast-adjusted labels and focus indicators.
-- ✨ **Subtle Spring Motion**: CSS-only soft bounce for button releases, menus, dialogs, selection markers, and save-status feedback, with gentle panel fades. Text and caret stay stationary, panel resizing remains immediate, and the operating system's reduced-motion preference disables animations.
+- ✨ **Subtle Spring Motion**: CSS-only restrained feedback for button releases and short menu/dialog entrances, with gentle panel fades. Text, caret, navigation labels, and selection markers stay stationary, panel resizing remains immediate, and the operating system's reduced-motion preference disables animations.
 - 🛡️ **Ironclad Data Safety**: Debounced autosave with a serialized write queue, flush-before-load page switching, window close protection, and non-destructive recovery that never silently wipes malformed documents.
 - 📤 **Markdown Export**: Export any note to standard `.md` format with sanitized, OS-safe file naming.
 - 💾 **Transparent Local Storage**: Inspect, copy, or open the live data and Markdown backup locations directly from Settings.
@@ -281,6 +281,12 @@ Markdown backups are deliberately kept separate at:
 ```
 
 Open **Settings → Storage** to view, copy, or open either location. **Backup all notes** continues to write readable Markdown copies to the Documents folder, while individual Markdown exports go to the location selected in the save dialog. Use **Settings → Backup → Import Markdown** to select one or more `.md` files and add each one as a new top-level note without replacing existing notes.
+
+Settings uses a compact desktop dialog with app information at the top, matte shadows on controls and separators, and a persistent Close button below the scrollable settings. Its colors follow your theme and accent preference.
+
+Block and page action menus share matte surfaces, soft shadows, larger labels, and readable keyboard shortcuts, with visible hover and keyboard focus states.
+
+The workbench retains its warm light palette and Charcoal/Graphite/Warm Ivory dark palette. Settings, search, Trash, confirmations, and editor tools use opaque matte surfaces and restrained layer separation; ordinary controls remain neutral while selected states retain your accent color. The eaworks maker identity is limited to the product artwork and understated `by ea.` credit.
 
 LocalNote does not migrate or modify data from the former `%APPDATA%\com.localnote.desktop` location. Existing Markdown backups in `Documents\LocalNote Notes` are left untouched; new backups are written to `Documents\LocalNote Backups`.
 

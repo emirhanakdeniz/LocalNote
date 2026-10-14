@@ -3,12 +3,12 @@
    stationary; never animate layout or retain compositor layers with will-change. */
 :root {
   --motion-press: 90ms;
-  --motion-feedback: 180ms;
-  --motion-enter: 320ms;
-  --motion-menu: 240ms;
-  --motion-open: 280ms;
+  --motion-feedback: 140ms;
+  --motion-enter: 240ms;
+  --motion-menu: 180ms;
+  --motion-open: 200ms;
   --motion-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --motion-spring: cubic-bezier(0.22, 1.45, 0.36, 1);
+  --motion-spring: cubic-bezier(0.22, 1.16, 0.36, 1);
 }
 
 /* Panel sizes change immediately, including while dragging a resizer. */
@@ -26,19 +26,6 @@
 /* Opacity avoids changing the containing block of fixed editor popovers. */
 .editor-view-container--focus-mode .editor-header {
   animation: motion-reveal var(--motion-enter) var(--motion-ease);
-}
-
-.page-tree__children,
-.page-tree__inline-panel,
-.sidebar__header-row,
-.sidebar__search-row {
-  animation: motion-reveal var(--motion-enter) var(--motion-ease);
-}
-
-.page-tree__row:has(.page-tree__item[aria-current="page"])::before,
-.table-of-contents__item--active::before {
-  animation: motion-marker var(--motion-enter) var(--motion-ease);
-  transform-origin: center;
 }
 
 /* Include color feedback for mouse and keyboard use, without changing hit areas. */
@@ -77,7 +64,7 @@
   .code-language-picker__trigger,
   .bn-side-menu button
 ):not(:disabled):active {
-  scale: 0.965;
+  scale: 0.985;
 }
 
 .quick-search,
@@ -118,17 +105,8 @@
   transition: background-color var(--transition-fast);
 }
 
-/* One response when editing begins; no per-keystroke animation or JS timer. */
-.status-dot--unsaved {
-  animation: motion-status var(--motion-open) var(--motion-ease);
-}
-
 .status-dot--saving {
   animation: motion-breathe 900ms ease-in-out infinite;
-}
-
-.status-dot--saved {
-  animation: motion-status var(--motion-open) var(--motion-ease);
 }
 
 .document__save-error,
@@ -148,30 +126,15 @@
 }
 
 @keyframes motion-surface {
-  0% { opacity: 0; translate: 0 8px; scale: 0.975; }
-  65% { opacity: 1; translate: 0 -1px; scale: 1.003; }
-  85% { opacity: 1; translate: 0 0.3px; scale: 0.999; }
+  0% { opacity: 0; translate: 0 4px; scale: 0.99; }
+  70% { opacity: 1; translate: 0 -0.5px; scale: 1.001; }
   100% { opacity: 1; translate: 0 0; scale: 1; }
 }
 
 @keyframes motion-menu {
-  0% { opacity: 0; translate: 0 4px; }
-  70% { opacity: 1; translate: 0 -0.5px; }
+  0% { opacity: 0; translate: 0 2px; }
+  70% { opacity: 1; translate: 0 -0.25px; }
   100% { opacity: 1; translate: 0 0; }
-}
-
-@keyframes motion-marker {
-  0% { opacity: 0; scale: 1 0.65; }
-  65% { opacity: 1; scale: 1 1.08; }
-  85% { opacity: 1; scale: 1 0.99; }
-  100% { opacity: 1; scale: 1 1; }
-}
-
-@keyframes motion-status {
-  0% { opacity: 0.5; scale: 0.75; }
-  60% { opacity: 1; scale: 1.12; }
-  82% { opacity: 1; scale: 0.98; }
-  100% { opacity: 1; scale: 1; }
 }
 
 @keyframes motion-breathe {

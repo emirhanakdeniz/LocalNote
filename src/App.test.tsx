@@ -362,6 +362,17 @@ describe("LocalNote page management", () => {
     fireEvent.click(within(dialog).getByRole("radio", { name: "Off" }));
     expect(invokeMock).toHaveBeenCalledWith("set_spellcheck", { preference: "off" });
 
+    const closeButton = within(dialog).getByRole("button", { name: "Close" });
+    closeButton.focus();
+    fireEvent.keyDown(window, { key: "Tab" });
+    expect(within(dialog).getByRole("button", { name: "Close settings" })).toHaveFocus();
+    fireEvent.keyDown(window, { key: "Tab", shiftKey: true });
+    expect(closeButton).toHaveFocus();
+    fireEvent.click(closeButton);
+    expect(screen.queryByRole("dialog", { name: "Settings" })).not.toBeInTheDocument();
+    expect(settingsTrigger).toHaveFocus();
+
+    fireEvent.click(settingsTrigger);
     fireEvent.keyDown(window, { key: "Escape" });
     expect(screen.queryByRole("dialog", { name: "Settings" })).not.toBeInTheDocument();
     expect(settingsTrigger).toHaveFocus();
