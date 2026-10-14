@@ -1,0 +1,192 @@
+/* Soft spring feedback, approximated with CSS curves and damped keyframes.
+   Keep editor text and fixed-position menu ancestors
+   stationary; never animate layout or retain compositor layers with will-change. */
+:root {
+  --motion-press: 90ms;
+  --motion-feedback: 180ms;
+  --motion-enter: 320ms;
+  --motion-menu: 240ms;
+  --motion-open: 280ms;
+  --motion-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-spring: cubic-bezier(0.22, 1.45, 0.36, 1);
+}
+
+/* Panel sizes change immediately, including while dragging a resizer. */
+.app-shell {
+  transition: none;
+}
+
+.sidebar,
+.document,
+.empty-document,
+.table-of-contents {
+  animation: motion-reveal var(--motion-open) var(--motion-ease);
+}
+
+/* Opacity avoids changing the containing block of fixed editor popovers. */
+.editor-view-container--focus-mode .editor-header {
+  animation: motion-reveal var(--motion-enter) var(--motion-ease);
+}
+
+.page-tree__children,
+.page-tree__inline-panel,
+.sidebar__header-row,
+.sidebar__search-row {
+  animation: motion-reveal var(--motion-enter) var(--motion-ease);
+}
+
+.page-tree__row:has(.page-tree__item[aria-current="page"])::before,
+.table-of-contents__item--active::before {
+  animation: motion-marker var(--motion-enter) var(--motion-ease);
+  transform-origin: center;
+}
+
+/* Include color feedback for mouse and keyboard use, without changing hit areas. */
+.app-frame :where(button):not(:where(
+  .sidebar-mobile-backdrop,
+  .sidebar__resizer,
+  .table-of-contents__resizer
+)) {
+  transition: background-color var(--transition-fast),
+    color var(--transition-fast), border-color var(--transition-fast),
+    box-shadow var(--transition-fast), opacity var(--motion-feedback) ease-out,
+    scale var(--motion-enter) var(--motion-spring);
+}
+
+.app-frame :where(button):not(:disabled):not(:where(
+  .sidebar-mobile-backdrop,
+  .sidebar__resizer,
+  .table-of-contents__resizer
+)):active {
+  opacity: 0.8;
+  transition-duration: var(--motion-press);
+  transition-timing-function: ease-out;
+}
+
+.app-frame :where(
+  .sidebar-new-note-btn,
+  .sidebar__icon-button,
+  .sidebar__collapse-button,
+  .sidebar-footer__btn,
+  .editor-action-btn,
+  .confirm-dialog__btn,
+  .settings__button,
+  .settings__close,
+  .trash-dialog__action-btn,
+  .code-block-toolbar__copy,
+  .code-language-picker__trigger,
+  .bn-side-menu button
+):not(:disabled):active {
+  scale: 0.965;
+}
+
+.quick-search,
+.settings,
+.confirm-dialog-backdrop,
+.trash-dialog-backdrop,
+.sidebar-mobile-backdrop {
+  animation: motion-reveal var(--motion-feedback) ease-out;
+}
+
+.quick-search__dialog,
+.settings__dialog,
+.confirm-dialog,
+.trash-dialog {
+  animation: motion-surface var(--motion-enter) ease-out;
+}
+
+.context-menu,
+.page-menu,
+.document__page-menu,
+.block-context-menu,
+.code-language-picker__popover {
+  animation: motion-menu var(--motion-menu) ease-out;
+}
+
+/* Preserve each tooltip's existing positioning transform. */
+.tooltip {
+  animation: motion-menu var(--motion-menu) ease-out;
+}
+
+/* BlockNote owns floating-toolbar positioning; only fade their surfaces. */
+.bn-mantine .bn-suggestion-menu,
+.bn-mantine .bn-toolbar {
+  animation: motion-reveal var(--motion-feedback) ease-out;
+}
+
+.status-dot {
+  transition: background-color var(--transition-fast);
+}
+
+/* One response when editing begins; no per-keystroke animation or JS timer. */
+.status-dot--unsaved {
+  animation: motion-status var(--motion-open) var(--motion-ease);
+}
+
+.status-dot--saving {
+  animation: motion-breathe 900ms ease-in-out infinite;
+}
+
+.status-dot--saved {
+  animation: motion-status var(--motion-open) var(--motion-ease);
+}
+
+.document__save-error,
+.document__export-error,
+.document__export-feedback,
+.settings__error {
+  animation: motion-reveal var(--motion-feedback) ease-out;
+}
+
+.empty-document[aria-label="Loading pages"] p {
+  animation: motion-breathe 900ms ease-in-out 3;
+}
+
+@keyframes motion-reveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes motion-surface {
+  0% { opacity: 0; translate: 0 8px; scale: 0.975; }
+  65% { opacity: 1; translate: 0 -1px; scale: 1.003; }
+  85% { opacity: 1; translate: 0 0.3px; scale: 0.999; }
+  100% { opacity: 1; translate: 0 0; scale: 1; }
+}
+
+@keyframes motion-menu {
+  0% { opacity: 0; translate: 0 4px; }
+  70% { opacity: 1; translate: 0 -0.5px; }
+  100% { opacity: 1; translate: 0 0; }
+}
+
+@keyframes motion-marker {
+  0% { opacity: 0; scale: 1 0.65; }
+  65% { opacity: 1; scale: 1 1.08; }
+  85% { opacity: 1; scale: 1 0.99; }
+  100% { opacity: 1; scale: 1 1; }
+}
+
+@keyframes motion-status {
+  0% { opacity: 0.5; scale: 0.75; }
+  60% { opacity: 1; scale: 1.12; }
+  82% { opacity: 1; scale: 0.98; }
+  100% { opacity: 1; scale: 1; }
+}
+
+@keyframes motion-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  .app-frame button:active {
+    scale: none;
+  }
+}
